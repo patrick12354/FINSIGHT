@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model 1 - Prediktor Profit</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">&larr; Kembali ke Menu</a>
+        <h1>📈 Model 1: Prediktor Profitabilitas (Regresi)</h1>
+        <p>Form ini <strong>TIDAK</strong> menggunakan 'Price' atau 'Unit Cost'. Model memprediksi profit murni dari strategi.</p>
+
+        <form id="profit-form">
+            <div class="form-grid">
+                <div class="form-column">
+                    <h3>Data Produk</h3>
+                    <div class="form-group">
+                        <label for="Product_Category">Kategori Produk</label>
+                        <select id="Product_Category" name="Product Category" required>
+                            {% for item in form_data['Product Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Product_Sub_Category">Sub-Kategori</label>
+                        <select id="Product_Sub_Category" name="Product Sub Category" required>
+                            {% for item in form_data['Product Sub Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Manufacturer">Manufaktur</label>
+                        <select id="Manufacturer" name="Manufacturer" required>
+                            {% for item in form_data['Manufacturer'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Product_Name">Nama Produk (Autocomplete)</label>
+                        <input type="text" id="Product_Name" name="Product Name" list="product-list" required>
+                    </div>
+                </div>
+                <div class="form-column">
+                    <h3>Data Lokasi & Promosi</h3>
+                    <div class="form-group">
+                        <label for="Region">Region</label>
+                        <select id="Region" name="Region" required>
+                            {% for item in form_data['Region'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Country">Negara</label>
+                        <select id="Country" name="Country" required>
+                            {% for item in form_data['Country'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="City">Kota (Autocomplete)</label>
+                        <input type="text" id="City" name="City" list="city-list" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Channel">Channel</label>
+                        <select id="Channel" name="Channel" required>
+                            {% for item in form_data['Channel'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Promotion_Name">Nama Promosi</label>
+                        <select id="Promotion_Name" name="Promotion Name" required>
+                            {% for item in form_data['Promotion Name'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_month">Bulan (1-12)</label>
+                        <select id="date_month" name="date_month" required>
+                            {% for item in form_data['date_month'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_day_of_week">Hari (0=Senin, 6=Minggu)</label>
+                        <select id="date_day_of_week" name="date_day_of_week" required>
+                            {% for item in form_data['date_day_of_week'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" id="submit-button">Prediksi Profit</button>
+        </form>
+
+        <div id="results-container">
+            <h2>Hasil Prediksi:</h2>
+            <div id="results">
+                <p>Silakan isi form dan tekan "Prediksi" untuk melihat hasil.</p>
+            </div>
+        </div>
+    </div>
+    <datalist id="product-list">
+        {% for item in form_data['Product Name'] %}<option value="{{ item }}">{% endfor %}
+    </datalist>
+    <datalist id="city-list">
+        {% for item in form_data['City'] %}<option value="{{ item }}">{% endfor %}
+    </datalist>
+    <script src="{{ url_for('static', filename='profit_page.js') }}" defer></script>
+</body>
+</html>
