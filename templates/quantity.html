@@ -1,90 +1,83 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model 2 - Prediktor Kuantitas</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Quantity Prediction - FINSIGHT{% endblock %}
+
+{% block content %}
+<div class="content-section">
     <div class="container">
-        <a href="/" class="back-link">&larr; Kembali ke Menu</a>
-        <h1>📦 Model 2: Prediktor Kuantitas (Regresi)</h1>
-        <p>Form ini menggunakan 'Price' dan 'Unit Cost' karena Model 2 dilatih untuk memprediksi kuantitas berdasarkan harga.</p>
-
-        <form id="quantity-form">
-            <div class="form-grid">
-                <!-- Kolom Kiri -->
-                <div class="form-column">
-                    <h3>Data Produk & Harga</h3>
-                    <div class="form-group">
-                        <label for="Product_Category">Kategori Produk</label>
-                        <select id="Product_Category" name="Product Category" required>
-                            {% for item in form_data['Product Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
+        <h2 class="section-title">Quantity Prediction Model</h2>
+        <div class="row g-5">
+            <!-- Input Form -->
+            <div class="col-lg-7">
+                <div class="card form-container">
+                    <div class="card-header">Input Parameters</div>
+                    <div class="card-body">
+                        <form id="quantity-form">
+                            <div class="row">
+                                {% for field, options in form_data.items() %}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ field }}" class="form-label">{{ field.replace('_', ' ')|title }}</label>
+                                    <select class="form-select" id="{{ field }}" name="{{ field }}">
+                                        {% for option in options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Predict Quantity</button>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="Price">Harga Jual (Price)</label>
-                        <input type="number" id="Price" name="Price" step="0.01" placeholder="cth: 304.0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="Unit_Cost">Modal (Unit Cost)</label>
-                        <input type="number" id="Unit_Cost" name="Unit Cost" step="0.01" placeholder="cth: 76.095" required>
-                    </div>
-                </div>
-                <!-- Kolom Kanan -->
-                <div class="form-column">
-                    <h3>Data Lokasi & Promosi</h3>
-                    <div class="form-group">
-                        <label for="Region">Region</label>
-                        <select id="Region" name="Region" required>
-                            {% for item in form_data['Region'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Channel">Channel</label>
-                        <select id="Channel" name="Channel" required>
-                            {% for item in form_data['Channel'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Promotion_Name">Nama Promosi</label>
-                        <select id="Promotion_Name" name="Promotion Name" required>
-                            {% for item in form_data['Promotion Name'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    
-                    <!-- ===== INI ADALAH PERBAIKANNYA ===== -->
-                    <div class="form-group">
-                        <label for="date_month">Bulan (1-12)</label>
-                        <select id="date_month" name="date_month" required>
-                            {% for item in form_data['date_month'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_day_of_week">Hari (0=Senin, 6=Minggu)</label>
-                        <select id="date_day_of_week" name="date_day_of_week" required>
-                            {% for item in form_data['date_day_of_week'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <!-- ===== AKHIR DARI PERBAIKAN ===== -->
-
                 </div>
             </div>
-            
-            <button type="submit" id="submit-button">Prediksi Kuantitas</button>
-        </form>
-
-        <div id="results-container">
-            <h2>Hasil Prediksi:</h2>
-            <div id="results">
-                <p>Silakan isi form dan tekan "Prediksi" untuk melihat hasil.</p>
+            <!-- Output/Result -->
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-header">Prediction Result</div>
+                    <div class="card-body result-container" id="quantity-result-container">
+                        <h4>Predicted Quantity</h4>
+                        <p class="result-value" id="quantity-result-value">0</p>
+                        <small class="text-muted">Result will be updated after prediction.</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('quantity-form').addEventListener('submit', function(e) {
+    e.preventDefault();
     
-    <!-- Kita tidak perlu datalist untuk halaman ini -->
-    
-    <script src="{{ url_for('static', filename='quantity.js') }}" defer></script>
-</body>
-</html>
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    const resultValue = document.getElementById('quantity-result-value');
+    resultValue.textContent = '...';
+
+    fetch('/predict/quantity', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.error) {
+            resultValue.textContent = 'Error';
+            console.error('Error:', result.error);
+        } else {
+            resultValue.textContent = result.quantity;
+        }
+    })
+    .catch(error => {
+        resultValue.textContent = 'Failed';
+        console.error('Fetch Error:', error);
+    });
+});
+</script>
+{% endblock %}

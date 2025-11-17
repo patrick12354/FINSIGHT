@@ -1,124 +1,116 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dasbor Gabungan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <a href="/" class="back-link">&larr; Kembali ke Menu</a>
-        <h1>📊 Dasbor Gabungan</h1>
-        <p>Halaman ini berisi <strong>semua input</strong> dan akan menjalankan <strong>ketiga model</strong> sekaligus untuk memberikan gambaran lengkap.</p>
+{% extends "base.html" %}
 
-        <!-- Form ini akan ditangani oleh 'overall.js' -->
-        <form id="overall-form">
-            <div class="form-grid">
-                <!-- Kolom Kiri -->
-                <div class="form-column">
-                    <h3>Data Produk & Harga</h3>
-                    
-                    <!-- Input untuk SEMUA model -->
-                    <div class="form-group">
-                        <label for="Product_Category">Kategori Produk</label>
-                        <select id="Product_Category" name="Product Category" required>
-                            {% for item in form_data['Product Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Product_Sub_Category">Sub-Kategori</label>
-                        <select id="Product_Sub_Category" name="Product Sub Category" required>
-                            {% for item in form_data['Product Sub Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Manufacturer">Manufaktur</label>
-                        <select id="Manufacturer" name="Manufacturer" required>
-                            {% for item in form_data['Manufacturer'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Product_Name">Nama Produk (Autocomplete)</label>
-                        <input type="text" id="Product_Name" name="Product Name" list="product-list" required>
-                    </div>
-                    
-                    <!-- Input HANYA untuk Model 2 (Kuantitas) -->
-                    <div class="form-group">
-                        <label for="Price">Harga Jual (Price)</label>
-                        <input type="number" id="Price" name="Price" step="0.01" placeholder="cth: 304.0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="Unit_Cost">Modal (Unit Cost)</label>
-                        <input type="number" id="Unit_Cost" name="Unit Cost" step="0.01" placeholder="cth: 76.095" required>
-                    </div>
-                </div>
-                
-                <!-- Kolom Kanan -->
-                <div class="form-column">
-                    <h3>Data Lokasi & Promosi</h3>
-                    <div class="form-group">
-                        <label for="Region">Region</label>
-                        <select id="Region" name="Region" required>
-                            {% for item in form_data['Region'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Country">Negara</label>
-                        <select id="Country" name="Country" required>
-                            {% for item in form_data['Country'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="City">Kota (Autocomplete)</label>
-                        <input type="text" id="City" name="City" list="city-list" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="Channel">Channel</label>
-                        <select id="Channel" name="Channel" required>
-                            {% for item in form_data['Channel'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Promotion_Name">Nama Promosi</label>
-                        <select id="Promotion_Name" name="Promotion Name" required>
-                            {% for item in form_data['Promotion Name'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_month">Bulan (1-12)</label>
-                        <select id="date_month" name="date_month" required>
-                            {% for item in form_data['date_month'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_day_of_week">Hari (0=Senin, 6=Minggu)</label>
-                        <select id="date_day_of_week" name="date_day_of_week" required>
-                            {% for item in form_data['date_day_of_week'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
+{% block title %}Overall Dashboard - FINSIGHT{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <div class="container">
+        <h2 class="section-title">Overall Prediction Dashboard</h2>
+        <p class="text-center text-muted mb-5" style="max-width: 600px; margin: auto;">Use a single form to run all predictions simultaneously and see the results side-by-side.</p>
+        
+        <div class="row g-5">
+            <!-- Input Form -->
+            <div class="col-lg-7">
+                <div class="card form-container">
+                    <div class="card-header">Input Parameters</div>
+                    <div class="card-body">
+                        <form id="overall-form">
+                            <div class="row">
+                                {% for field, options in form_data.items() %}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ field }}" class="form-label">{{ field.replace('_', ' ')|title }}</label>
+                                    <select class="form-select" id="{{ field }}" name="{{ field }}">
+                                        {% for option in options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg mt-3">Run All Predictions</button>
+                        </form>
                     </div>
                 </div>
             </div>
             
-            <button type="submit" id="submit-button">Jalankan Semua Prediksi</button>
-        </form>
-
-        <div id="results-container">
-            <h2>Hasil Prediksi Gabungan:</h2>
-            <div id="results">
-                <p>Silakan isi form dan tekan "Prediksi" untuk melihat hasil.</p>
+            <!-- Output/Result -->
+            <div class="col-lg-5">
+                <div id="overall-results">
+                    <!-- Profit Result -->
+                    <div class="card mb-4">
+                        <div class="card-header">Predicted Profit</div>
+                        <div class="card-body result-container">
+                            <p class="result-value" id="overall-profit-result">$0.00</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantity Result -->
+                    <div class="card mb-4">
+                        <div class="card-header">Predicted Quantity</div>
+                        <div class="card-body result-container">
+                            <p class="result-value" id="overall-quantity-result">0</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Classification Result -->
+                    <div class="card">
+                        <div class="card-header">High-Profit Classification</div>
+                        <div class="card-body result-container">
+                            <p class="result-value" id="overall-classification-result">-</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <!-- Datalist (disembunyikan) -->
-    <datalist id="product-list">
-        {% for item in form_data['Product Name'] %}<option value="{{ item }}">{% endfor %}
-    </datalist>
-    <datalist id="city-list">
-        {% for item in form_data['City'] %}<option value="{{ item }}">{% endfor %}
-    </datalist>
+{% block scripts %}
+<script>
+document.getElementById('overall-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-    <script src="{{ url_for('static', filename='overall.js') }}" defer></script>
-</body>
-</html>
+    // Target elements
+    const profitResultEl = document.getElementById('overall-profit-result');
+    const quantityResultEl = document.getElementById('overall-quantity-result');
+    const classResultEl = document.getElementById('overall-classification-result');
+
+    // Set loading state
+    profitResultEl.textContent = '...';
+    quantityResultEl.textContent = '...';
+    classResultEl.textContent = '...';
+
+    const fetchData = (url, el, formatter) => {
+        return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.error) {
+                el.textContent = 'Error';
+            } else {
+                el.textContent = formatter(result);
+            }
+        })
+        .catch(error => {
+            el.textContent = 'Failed';
+            console.error(`Fetch Error for ${url}:`, error);
+        });
+    };
+
+    // Run all predictions in parallel
+    Promise.all([
+        fetchData('/predict/profit', profitResultEl, res => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(res.profit)),
+        fetchData('/predict/quantity', quantityResultEl, res => res.quantity),
+        fetchData('/predict/classification', classResultEl, res => res.high_profit === 1 ? 'Yes' : 'No')
+    ]);
+});
+</script>
+{% endblock %}

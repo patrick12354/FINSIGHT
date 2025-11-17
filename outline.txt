@@ -1,0 +1,85 @@
+### Ringkasan Proyek: FINSIGHT
+
+**1. Gambaran Umum Proyek**
+
+FINSIGHT adalah aplikasi web berbasis *predictive analytics* yang dirancang untuk startup dan bisnis. Aplikasi ini berfungsi sebagai dasbor interaktif yang memungkinkan pengguna memprediksi metrik bisnis utama berdasarkan data input. Tujuannya adalah untuk mendemokratisasi akses terhadap AI, memberikan alat prediksi yang kuat kepada perusahaan sebagai ganti data transaksional mereka untuk melatih model lebih lanjut. Aplikasi ini memiliki citra startup teknologi yang modern, bersih, dan profesional.
+
+**2. Fungsionalitas Inti**
+
+*   **Prediksi Profit:** Memprediksi jumlah profit yang akan dihasilkan berdasarkan serangkaian parameter (misalnya, produk, promosi, lokasi).
+*   **Prediksi Kuantitas:** Memprediksi jumlah unit produk yang akan terjual.
+*   **Klasifikasi Profit Tinggi:** Mengklasifikasikan apakah sebuah skenario penjualan berpotensi menghasilkan profit tinggi atau tidak.
+*   **Dasbor Terintegrasi:** Menyediakan satu halaman di mana pengguna dapat menjalankan ketiga model prediksi secara bersamaan.
+*   **Proposal Kemitraan:** Menawarkan halaman khusus yang menjelaskan model bisnis startup: akses gratis ke alat AI selama 2 tahun dengan imbalan data penjualan dari perusahaan mitra.
+
+**3. Tumpukan Teknologi (Technology Stack)**
+
+*   **Backend:** Python
+*   **Web Framework:** Flask
+*   **Manipulasi Data & ML:** Pandas, Scikit-learn
+*   **Frontend:** HTML5, CSS3, JavaScript
+*   **CSS Framework:** Bootstrap 5
+*   **Font:** Google Fonts (Poppins)
+
+**4. Struktur File dan Penjelasannya**
+
+```
+/FINSIGHT/
+├── app.py
+├── company_data.csv
+├── requirements.txt
+├── models/
+│   ├── model_high_profit_classifier.pkl
+│   ├── model_profit_predictor.pkl
+│   └── model_quantity_predictor.pkl
+├── static/
+│   ├── images/
+│   │   ├── logo.png
+│   │   └── homepage_illustration.png
+│   └── style.css
+└── templates/
+    ├── base.html
+    ├── index.html
+    ├── collaboration.html
+    ├── classification_page.html
+    ├── profit_page.html
+    ├── quantity.html
+    └── overall.html
+```
+
+*   **`app.py`**: Inti dari aplikasi Flask. File ini menangani routing (pemetaan URL ke fungsi), memuat model-model Machine Learning (`.pkl`), menyajikan halaman HTML, dan menyediakan API untuk prediksi.
+*   **`requirements.txt`**: Mendaftar semua dependensi Python yang dibutuhkan proyek (Flask, Pandas, Scikit-learn).
+*   **`company_data.csv`**: Dataset yang digunakan untuk mengisi opsi-opsi *dropdown* pada form input di halaman web, seperti daftar produk, kategori, dan wilayah.
+*   **`models/`**: Direktori yang berisi model-model machine learning yang sudah dilatih dan disimpan sebagai file `.pkl` menggunakan `joblib`.
+*   **`templates/`**: Berisi file-file HTML.
+    *   `base.html`: Template induk yang berisi struktur dasar (navbar, footer, import CSS/JS) yang diwarisi oleh semua halaman lain untuk konsistensi.
+    *   `index.html`: Halaman utama (Homepage) yang memperkenalkan FINSIGHT.
+    *   `collaboration.html`: Halaman yang menjelaskan proposal kemitraan.
+    *   `profit_page.html`, `quantity.html`, `classification_page.html`, `overall.html`: Halaman-halaman untuk setiap model AI, berisi form input dan area untuk menampilkan hasil prediksi. Logika JavaScript untuk interaksi API disematkan langsung di dalam file-file ini.
+*   **`static/`**: Berisi aset-aset frontend.
+    *   `images/`: Menyimpan gambar-gambar seperti logo dan ilustrasi.
+    *   `style.css`: File CSS utama yang mendefinisikan seluruh gaya visual aplikasi, termasuk palet warna, tipografi, dan desain komponen.
+    *   File `.js` yang ada saat ini tidak lagi digunakan karena logikanya telah dipindahkan ke dalam tag `<script>` di masing-masing file HTML untuk penyederhanaan.
+
+**5. Alur Kerja Aplikasi & API**
+
+1.  **Inisialisasi:** Saat `app.py` dijalankan, server Flask dimulai dan semua model ML dimuat ke dalam memori.
+2.  **Interaksi Pengguna:**
+    *   Pengguna membuka aplikasi dan melihat `index.html` (Homepage).
+    *   Melalui navbar, pengguna menavigasi ke salah satu halaman model (misal, `profit_page.html`).
+    *   Pengguna mengisi form input dengan data yang diinginkan.
+3.  **Proses Prediksi (Frontend):**
+    *   Ketika tombol "Predict" ditekan, JavaScript di dalam file HTML mengambil data dari form.
+    *   JavaScript mengirimkan data ini dalam format JSON ke endpoint API yang sesuai di backend menggunakan `fetch()`.
+4.  **Proses Prediksi (Backend):**
+    *   Endpoint API di `app.py` (misal, `/predict/profit`) menerima data JSON.
+    *   Data tersebut diubah menjadi DataFrame Pandas.
+    *   Model ML yang sesuai (`model_profit.predict()`) digunakan untuk membuat prediksi.
+    *   Hasil prediksi dikirim kembali ke frontend sebagai respons JSON.
+5.  **Menampilkan Hasil:**
+    *   JavaScript di frontend menerima respons JSON dan menampilkan hasilnya secara dinamis di area hasil pada halaman web.
+
+**API Endpoints:**
+*   `POST /predict/profit`: Menerima data, mengembalikan prediksi profit.
+*   `POST /predict/quantity`: Menerima data, mengembalikan prediksi kuantitas.
+*   `POST /predict/classification`: Menerima data, mengembalikan klasifikasi profit tinggi (1 atau 0).

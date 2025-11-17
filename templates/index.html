@@ -1,39 +1,35 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UAS Alpro 2 - Halaman Utama</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}FINSIGHT - Empowering Business with Predictive Analytics{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
     <div class="container">
-        <h1>🚀 Dasbor Intelijen Penjualan (FINSIGHT)</h1>
-        <p>Selamat datang di proyek UAS Algoritma Pemrograman 2. Sistem ini terdiri dari 3 model Machine Learning yang valid.</p>
-        
-        <h2>Pilih Model Prediksi:</h2>
-        
-        <div class="menu-container">
-            <a href="/profit" class="menu-card">
-                <h3>📈 Model 1: Prediktor Profitabilitas</h3>
-                <p>Memprediksi estimasi profit (Regresi) berdasarkan <strong>fitur strategis</strong> (Region, Kategori, Promosi).</p>
-            </a>
-            
-            <a href="/quantity" class="menu-card">
-                <h3>📦 Model 2: Prediktor Kuantitas</h3>
-                <p>Memprediksi estimasi <strong>kuantitas (unit)</strong> yang akan terjual berdasarkan harga, modal, dan fitur strategis.</p>
-            </a>
-            
-            <a href="/classification" class="menu-card">
-                <h3>🎯 Model 3: Klasifikasi High Profit</h3>
-                <p>Memprediksi apakah penjualan akan (High/Low) Profit (Klasifikasi) berdasarkan <strong>fitur strategis</strong>.</p>
-            </a>
-            
-            <a href="/overall" class="menu-card">
-                <h3>📊 Dasbor Gabungan</h3>
-                <p>Menjalankan semua model sekaligus dalam satu halaman untuk mendapatkan gambaran lengkap.</p>
-            </a>
+        <h1 class="display-4">Welcome to FINSIGHT</h1>
+        <p class="lead">Empowering Your Business with Predictive Analytics.</p>
+        <a class="btn btn-primary btn-lg mt-3" href="#who-are-we" role="button">Learn More</a>
+    </div>
+</div>
+
+<!-- "Who Are We?" Section -->
+<div id="who-are-we" class="content-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="section-title text-start">Who Are We?</h2>
+                <p>
+                    FINSIGHT is a forward-thinking startup dedicated to democratizing access to advanced artificial intelligence for businesses of all sizes. We believe that the power of data-driven decision-making should not be exclusive to large corporations with vast resources.
+                </p>
+                <p>
+                    Our core mission is to provide intuitive, powerful, and accessible predictive tools that help companies forecast sales, optimize inventory, and identify high-profit opportunities. By leveraging state-of-the-art machine learning models, we turn your historical sales data into actionable insights, giving you a clear vision of your financial future.
+                </p>
+                <a class="btn btn-outline-primary mt-2" href="{{ url_for('page_overall') }}" role="button">Explore Our AI Models</a>
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="{{ url_for('static', filename='images/homepage_illustration.png') }}" class="img-fluid rounded" alt="Predictive Analytics Illustration">
+            </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,105 +1,83 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model 3 - Klasifikasi Profit</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <a href="/" class="back-link">&larr; Kembali ke Menu</a>
-        <h1>🎯 Model 3: Klasifikasi High Profit (Klasifikasi)</h1>
-        <p>Form ini <strong>TIDAK</strong> menggunakan 'Price' atau 'Unit Cost'. Model memprediksi rekomendasi murni dari strategi.</p>
+{% extends "base.html" %}
 
-        <form id="classification-form">
-            <div class="form-grid">
-                <div class="form-column">
-                    <h3>Data Produk</h3>
-                    <div class="form-group">
-                        <label for="Product_Category">Kategori Produk</label>
-                        <select id="Product_Category" name="Product Category" required>
-                            {% for item in form_data['Product Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Product_Sub_Category">Sub-Kategori</label>
-                        <select id="Product_Sub_Category" name="Product Sub Category" required>
-                            {% for item in form_data['Product Sub Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Manufacturer">Manufaktur</label>
-                        <select id="Manufacturer" name="Manufacturer" required>
-                            {% for item in form_data['Manufacturer'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Product_Name">Nama Produk (Autocomplete)</label>
-                        <input type="text" id="Product_Name" name="Product Name" list="product-list" required>
-                    </div>
-                </div>
-                <div class="form-column">
-                    <h3>Data Lokasi & Promosi</h3>
-                    <div class="form-group">
-                        <label for="Region">Region</label>
-                        <select id="Region" name="Region" required>
-                            {% for item in form_data['Region'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Country">Negara</label>
-                        <select id="Country" name="Country" required>
-                            {% for item in form_data['Country'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="City">Kota (Autocomplete)</label>
-                        <input type="text" id="City" name="City" list="city-list" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="Channel">Channel</label>
-                        <select id="Channel" name="Channel" required>
-                            {% for item in form_data['Channel'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Promotion_Name">Nama Promosi</label>
-                        <select id="Promotion_Name" name="Promotion Name" required>
-                            {% for item in form_data['Promotion Name'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_month">Bulan (1-12)</label>
-                        <select id="date_month" name="date_month" required>
-                            {% for item in form_data['date_month'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_day_of_week">Hari (0=Senin, 6=Minggu)</label>
-                        <select id="date_day_of_week" name="date_day_of_week" required>
-                            {% for item in form_data['date_day_of_week'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                        </select>
+{% block title %}High-Profit Classification - FINSIGHT{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <div class="container">
+        <h2 class="section-title">High-Profit Classification Model</h2>
+        <div class="row g-5">
+            <!-- Input Form -->
+            <div class="col-lg-7">
+                <div class="card form-container">
+                    <div class="card-header">Input Parameters</div>
+                    <div class="card-body">
+                        <form id="classification-form">
+                            <div class="row">
+                                {% for field, options in form_data.items() %}
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ field }}" class="form-label">{{ field.replace('_', ' ')|title }}</label>
+                                    <select class="form-select" id="{{ field }}" name="{{ field }}">
+                                        {% for option in options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Classify Transaction</button>
+                        </form>
                     </div>
                 </div>
             </div>
-            
-            <button type="submit" id="submit-button">Prediksi Rekomendasi</button>
-        </form>
-
-        <div id="results-container">
-            <h2>Hasil Prediksi:</h2>
-            <div id="results">
-                <p>Silakan isi form dan tekan "Prediksi" untuk melihat hasil.</p>
+            <!-- Output/Result -->
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-header">Prediction Result</div>
+                    <div class="card-body result-container" id="classification-result-container">
+                        <h4>Is High Profit?</h4>
+                        <p class="result-value" id="classification-result-value">-</p>
+                        <small class="text-muted">Result will be updated after prediction.</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <datalist id="product-list">
-        {% for item in form_data['Product Name'] %}<option value="{{ item }}">{% endfor %}
-    </datalist>
-    <datalist id="city-list">
-        {% for item in form_data['City'] %}<option value="{{ item }}">{% endfor %}
-    </datalist>
-    <script src="{{ url_for('static', filename='classification_page.js') }}" defer></script>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('classification-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    const resultValue = document.getElementById('classification-result-value');
+    resultValue.textContent = '...';
+
+    fetch('/predict/classification', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.error) {
+            resultValue.textContent = 'Error';
+            console.error('Error:', result.error);
+        } else {
+            resultValue.textContent = result.high_profit === 1 ? 'Yes' : 'No';
+        }
+    })
+    .catch(error => {
+        resultValue.textContent = 'Failed';
+        console.error('Fetch Error:', error);
+    });
+});
+</script>
+{% endblock %}

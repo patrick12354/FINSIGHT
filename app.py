@@ -78,6 +78,11 @@ def page_overall():
     # Pastikan kamu punya 'overall.html' dan 'overall.js'
     return render_template('overall.html', form_data=FORM_OPTIONS)
 
+@app.route('/collaboration')
+def page_collaboration():
+    """Menampilkan halaman kerja sama."""
+    return render_template('collaboration.html')
+
 
 # ===================================================================
 # --- ROUTE UNTUK API (BACKEND SERVICE) ---
