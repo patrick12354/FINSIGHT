@@ -8,25 +8,43 @@ import os
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
 
+# DAFTAR FITUR FINAL (berdasarkan feature importance)
+FEATURES_M1_CATEGORICAL = [
+    'Product Sub Category', 'Manufacturer', 'City', 'Channel', 
+    'date_month', 'Promotion Name', 'date_day_of_week'
+]
+FEATURES_M3_CATEGORICAL = [
+    'Product Sub Category', 'City', 'Manufacturer', 'Product Category', 
+    'date_month', 'date_day_of_week', 'Promotion Name'
+]
+FEATURES_M2_CATEGORICAL = [
+    'Product Category', 'date_month', 'date_day_of_week', 'Promotion Name'
+]
+
+# Gabungkan semua fitur kategorikal unik yang perlu di-load
+ALL_UNIQUE_CATEGORICAL = sorted(list(
+    set(FEATURES_M1_CATEGORICAL + FEATURES_M3_CATEGORICAL + FEATURES_M2_CATEGORICAL)
+))
+
 # --- 2. FUNGSI LOAD DATA FORM ---
 def load_form_options():
     try:
         csv_path = os.path.join(BASE_DIR, 'company_data.csv')
         df = pd.read_csv(csv_path)
-        form_cols = [
-            'Channel', 'Promotion Name', 'Product Name', 'Manufacturer', 
-            'Product Sub Category', 'Product Category', 'Region', 'City', 'Country'
-        ]
+
+        # Gunakan daftar fitur unik kita
         options = {}
-        for col in form_cols:
-            unique_values = df[col].dropna().unique()
-            unique_values.sort()
-            options[col] = list(unique_values)
-        
+        for col in ALL_UNIQUE_CATEGORICAL:
+            if col in df.columns:
+                unique_values = df[col].dropna().unique()
+                unique_values.sort()
+                options[col] = list(unique_values)
+
+        # Tambahkan fitur tanggal/waktu secara manual
         options['date_month'] = [str(i) for i in range(1, 13)]
         options['date_day_of_week'] = [str(i) for i in range(0, 7)]
-        
-        print("Data dropdown/form berhasil di-load dari CSV.")
+
+        print("Data dropdown/form berhasil di-load (Hanya Fitur Signifikan).")
         return options
     except FileNotFoundError:
         print(f"ERROR: 'company_data.csv' tidak ditemukan di {BASE_DIR}")
@@ -43,10 +61,10 @@ try:
     model_qty = joblib.load(model_qty_path)
     model_high_profit = joblib.load(model_high_profit_path)
     print(f"Model berhasil di-load dari: {BASE_DIR}/models")
-    FORM_OPTIONS = load_form_options()
+    ALL_FORM_OPTIONS = load_form_options()
 except Exception as e:
     print(f"ERROR saat load: {e}")
-    model_profit, model_qty, model_high_profit, FORM_OPTIONS = None, None, None, {}
+    model_profit, model_qty, model_high_profit, ALL_FORM_OPTIONS = None, None, None, {}
 
 # ===================================================================
 # --- ROUTE UNTUK MENAMPILKAN HALAMAN HTML (FRONTEND) ---
@@ -59,24 +77,29 @@ def home():
 
 @app.route('/profit')
 def page_profit():
-    """Halaman BARU HANYA untuk Model 1 (Profit Regresi)."""
-    return render_template('profit_page.html', form_data=FORM_OPTIONS)
+    """Halaman HANYA untuk Model 1 (Profit Regresi)."""
+    # Filter: Kirim HANYA data yang dibutuhkan M1
+    form_data_m1 = {feat: ALL_FORM_OPTIONS.get(feat, []) for feat in FEATURES_M1_CATEGORICAL}
+    return render_template('profit_page.html', form_data=form_data_m1)
 
 @app.route('/quantity')
 def page_quantity():
-    """Halaman untuk Model 2 (Kuantitas). (Tidak berubah)"""
-    return render_template('quantity.html', form_data=FORM_OPTIONS)
+    """Halaman untuk Model 2 (Kuantitas)."""
+    # Filter: Kirim HANYA data yang dibutuhkan M2
+    form_data_m2 = {feat: ALL_FORM_OPTIONS.get(feat, []) for feat in FEATURES_M2_CATEGORICAL}
+    return render_template('quantity.html', form_data=form_data_m2)
 
 @app.route('/classification')
 def page_classification():
-    """Halaman BARU HANYA untuk Model 3 (Klasifikasi)."""
-    return render_template('classification_page.html', form_data=FORM_OPTIONS)
+    """Halaman HANYA untuk Model 3 (Klasifikasi)."""
+    form_data_m3 = {feat: ALL_FORM_OPTIONS.get(feat, []) for feat in FEATURES_M3_CATEGORICAL}
+    return render_template('classification_page.html', form_data=form_data_m3)
 
 @app.route('/overall')
 def page_overall():
-    """Halaman gabungan (Nanti kita buat)."""
-    # Pastikan kamu punya 'overall.html' dan 'overall.js'
-    return render_template('overall.html', form_data=FORM_OPTIONS)
+    """Halaman gabungan."""
+    # Halaman overall perlu SEMUA opsi
+    return render_template('overall.html', form_data=ALL_FORM_OPTIONS)
 
 @app.route('/collaboration')
 def page_collaboration():

@@ -14,16 +14,62 @@
                     <div class="card-body">
                         <form id="profit-form">
                             <div class="row">
-                                {% for field, options in form_data.items() %}
                                 <div class="col-md-6 mb-3">
-                                    <label for="{{ field }}" class="form-label">{{ field.replace('_', ' ')|title }}</label>
-                                    <select class="form-select" id="{{ field }}" name="{{ field }}">
-                                        {% for option in options %}
+                                    <label for="Product Sub Category" class="form-label">Product Sub Category</label>
+                                    <select class="form-select" id="Product Sub Category" name="Product Sub Category">
+                                        {% for option in form_data['Product Sub Category'] %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                {% endfor %}
+                                <div class="col-md-6 mb-3">
+                                    <label for="Manufacturer" class="form-label">Manufacturer</label>
+                                    <select class="form-select" id="Manufacturer" name="Manufacturer">
+                                        {% for option in form_data['Manufacturer'] %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="City" class="form-label">City</label>
+                                    <select class="form-select" id="City" name="City">
+                                        {% for option in form_data['City'] %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Channel" class="form-label">Channel</label>
+                                    <select class="form-select" id="Channel" name="Channel">
+                                        {% for option in form_data['Channel'] %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="date_month" class="form-label">Month</label>
+                                    <select class="form-select" id="date_month" name="date_month">
+                                        {% for option in form_data['date_month'] %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Promotion Name" class="form-label">Promotion Name</label>
+                                    <select class="form-select" id="Promotion Name" name="Promotion Name">
+                                        {% for option in form_data['Promotion Name'] %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="date_day_of_week" class="form-label">Day of Week</label>
+                                    <select class="form-select" id="date_day_of_week" name="date_day_of_week">
+                                        {% for option in form_data['date_day_of_week'] %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary mt-3">Predict Profit</button>
                         </form>
