@@ -6,56 +6,62 @@
 <div class="content-section">
     <div class="container">
         <h2 class="section-title">Quantity Prediction Model</h2>
+        <p class="section-description">This model predicts the potential quantity of products sold based on price, cost, and promotional data. Please provide the following inputs.</p>
         <div class="row g-5">
             <!-- Input Form -->
             <div class="col-lg-7">
                 <div class="card form-container">
-                    <div class="card-header">Input Parameters</div>
+                    <div class="card-header">Input Parameters for Quantity Prediction</div>
                     <div class="card-body">
-                        <form id="quantity-form">
+                        <form id="prediction-form">
                             <div class="row">
+                                <!-- Model 2 Features -->
                                 <div class="col-md-6 mb-3">
                                     <label for="Price" class="form-label">Price</label>
-                                    <input type="number" class="form-control" id="Price" name="Price" step="0.01" placeholder="Contoh: 150.50" required>
+                                    <input type="number" class="form-control" id="Price" name="Price" step="0.01" placeholder="e.g., 150.50" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="Unit_Cost" class="form-label">Unit Cost</label>
-                                    <input type="number" class="form-control" id="Unit_Cost" name="Unit_Cost" step="0.01" placeholder="Contoh: 100.25" required>
+                                    <input type="number" class="form-control" id="Unit_Cost" name="Unit_Cost" step="0.01" placeholder="e.g., 100.25" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="Product_Category" class="form-label">Product Category</label>
-                                    <select class="form-select" id="Product_Category" name="Product_Category">
-                                        {% for option in form_data['Product_Category'] %}
+                                    <select class="form-select" id="Product_Category" name="Product_Category" required>
+                                        <option value="" disabled selected>Select Category</option>
+                                        {% for option in form_data.Product_Category %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="date_month" class="form-label">Month</label>
-                                    <select class="form-select" id="date_month" name="date_month">
-                                        {% for option in form_data['date_month'] %}
+                                    <select class="form-select" id="date_month" name="date_month" required>
+                                        <option value="" disabled selected>Select Month</option>
+                                        {% for option in form_data.date_month %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="date_day_of_week" class="form-label">Day of Week</label>
-                                    <select class="form-select" id="date_day_of_week" name="date_day_of_week">
-                                        {% for option in form_data['date_day_of_week'] %}
+                                    <select class="form-select" id="date_day_of_week" name="date_day_of_week" required>
+                                        <option value="" disabled selected>Select Day</option>
+                                        {% for option in form_data.date_day_of_week %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="Promotion_Name" class="form-label">Promotion Name</label>
-                                    <select class="form-select" id="Promotion_Name" name="Promotion_Name">
-                                        {% for option in form_data['Promotion_Name'] %}
+                                    <select class="form-select" id="Promotion_Name" name="Promotion_Name" required>
+                                        <option value="" disabled selected>Select Promotion</option>
+                                        {% for option in form_data.Promotion_Name %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-3">Predict Quantity</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">Predict Quantity</button>
                         </form>
                     </div>
                 </div>
@@ -64,9 +70,9 @@
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header">Prediction Result</div>
-                    <div class="card-body result-container" id="quantity-result-container">
-                        <h4>Predicted Quantity</h4>
-                        <p class="result-value" id="quantity-result-value">0</p>
+                    <div class="card-body result-container" id="result-container">
+                        <h4 class="result-title">Predicted Quantity</h4>
+                        <p class="result-value" id="result-value">0</p>
                         <small class="text-muted">Result will be updated after prediction.</small>
                     </div>
                 </div>
@@ -78,18 +84,24 @@
 
 {% block scripts %}
 <script>
-document.getElementById('quantity-form').addEventListener('submit', function(e) {
+document.getElementById('prediction-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key.replace(/ /g, '_')] = value;
-    });
 
-    const resultValue = document.getElementById('quantity-result-value');
-    resultValue.textContent = '...';
+    const form = e.target;
+
+    // Create the data object with only the required fields for Model 2
+    const data = {
+        'Price': form.elements['Price'].value,
+        'Unit_Cost': form.elements['Unit_Cost'].value,
+        'Product_Category': form.elements['Product_Category'].value,
+        'date_month': form.elements['date_month'].value,
+        'date_day_of_week': form.elements['date_day_of_week'].value,
+        'Promotion_Name': form.elements['Promotion_Name'].value
+    };
+
+    // Show loading state
+    const resultValue = document.getElementById('result-value');
+    resultValue.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>';
 
     fetch('http://127.0.0.1:5000/api/predict/quantity', {
         method: 'POST',
@@ -98,17 +110,23 @@ document.getElementById('quantity-form').addEventListener('submit', function(e) 
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.error || `HTTP error! status: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
     .then(result => {
         if (result.error) {
-            resultValue.textContent = 'Error';
-            console.error('Error:', result.error);
+            resultValue.textContent = `Error: ${result.error}`;
         } else {
             resultValue.textContent = Math.round(result.result);
         }
     })
     .catch(error => {
-        resultValue.textContent = 'Failed';
+        resultValue.textContent = 'Prediction Failed';
         console.error('Fetch Error:', error);
     });
 });

@@ -6,72 +6,81 @@
 <div class="content-section">
     <div class="container">
         <h2 class="section-title">Profit Prediction Model</h2>
+        <p class="section-description">This model predicts the potential profit based on product, location, and promotion data. Please provide the following inputs.</p>
         <div class="row g-5">
             <!-- Input Form -->
             <div class="col-lg-7">
                 <div class="card form-container">
-                    <div class="card-header">Input Parameters</div>
+                    <div class="card-header">Input Parameters for Profit Prediction</div>
                     <div class="card-body">
-                        <form id="profit-form">
+                        <form id="prediction-form">
                             <div class="row">
+                                <!-- Model 1 Features -->
                                 <div class="col-md-6 mb-3">
                                     <label for="Product_Sub_Category" class="form-label">Product Sub Category</label>
-                                    <select class="form-select" id="Product_Sub_Category" name="Product_Sub_Category">
-                                        {% for option in form_data['Product_Sub_Category'] %}
+                                    <select class="form-select" id="Product_Sub_Category" name="Product_Sub_Category" required>
+                                        <option value="" disabled selected>Select Sub Category</option>
+                                        {% for option in form_data.Product_Sub_Category %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="Manufacturer" class="form-label">Manufacturer</label>
-                                    <select class="form-select" id="Manufacturer" name="Manufacturer">
-                                        {% for option in form_data['Manufacturer'] %}
+                                    <select class="form-select" id="Manufacturer" name="Manufacturer" required>
+                                        <option value="" disabled selected>Select Manufacturer</option>
+                                        {% for option in form_data.Manufacturer %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="City" class="form-label">City</label>
-                                    <select class="form-select" id="City" name="City">
-                                        {% for option in form_data['City'] %}
+                                    <select class="form-select" id="City" name="City" required>
+                                        <option value="" disabled selected>Select City</option>
+                                        {% for option in form_data.City %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="Channel" class="form-label">Channel</label>
-                                    <select class="form-select" id="Channel" name="Channel">
-                                        {% for option in form_data['Channel'] %}
+                                    <select class="form-select" id="Channel" name="Channel" required>
+                                        <option value="" disabled selected>Select Channel</option>
+                                        {% for option in form_data.Channel %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="date_month" class="form-label">Month</label>
-                                    <select class="form-select" id="date_month" name="date_month">
-                                        {% for option in form_data['date_month'] %}
+                                    <select class="form-select" id="date_month" name="date_month" required>
+                                        <option value="" disabled selected>Select Month</option>
+                                        {% for option in form_data.date_month %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="Promotion_Name" class="form-label">Promotion Name</label>
-                                    <select class="form-select" id="Promotion_Name" name="Promotion_Name">
-                                        {% for option in form_data['Promotion_Name'] %}
+                                    <select class="form-select" id="Promotion_Name" name="Promotion_Name" required>
+                                        <option value="" disabled selected>Select Promotion</option>
+                                        {% for option in form_data.Promotion_Name %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="date_day_of_week" class="form-label">Day of Week</label>
-                                    <select class="form-select" id="date_day_of_week" name="date_day_of_week">
-                                        {% for option in form_data['date_day_of_week'] %}
+                                    <select class="form-select" id="date_day_of_week" name="date_day_of_week" required>
+                                        <option value="" disabled selected>Select Day</option>
+                                        {% for option in form_data.date_day_of_week %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-3">Predict Profit</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">Predict Profit</button>
                         </form>
                     </div>
                 </div>
@@ -80,9 +89,9 @@
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header">Prediction Result</div>
-                    <div class="card-body result-container" id="profit-result-container">
-                        <h4>Predicted Profit</h4>
-                        <p class="result-value" id="profit-result-value">$0.00</p>
+                    <div class="card-body result-container" id="result-container">
+                        <h4 class="result-title">Predicted Profit</h4>
+                        <p class="result-value" id="result-value">$0.00</p>
                         <small class="text-muted">Result will be updated after prediction.</small>
                     </div>
                 </div>
@@ -94,19 +103,25 @@
 
 {% block scripts %}
 <script>
-document.getElementById('profit-form').addEventListener('submit', function(e) {
+document.getElementById('prediction-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const form = e.target;
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key.replace(/ /g, '_')] = value;
-    });
+    
+    // Create the data object with only the required fields for Model 1
+    const data = {
+        'Product_Sub_Category': form.elements['Product_Sub_Category'].value,
+        'Manufacturer': form.elements['Manufacturer'].value,
+        'City': form.elements['City'].value,
+        'Channel': form.elements['Channel'].value,
+        'date_month': form.elements['date_month'].value,
+        'Promotion_Name': form.elements['Promotion_Name'].value,
+        'date_day_of_week': form.elements['date_day_of_week'].value
+    };
 
     // Show loading state
-    const resultValue = document.getElementById('profit-result-value');
-    resultValue.textContent = '...';
+    const resultValue = document.getElementById('result-value');
+    resultValue.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>';
 
     fetch('http://127.0.0.1:5000/api/predict/profit', {
         method: 'POST',
@@ -115,22 +130,29 @@ document.getElementById('profit-form').addEventListener('submit', function(e) {
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            // Try to get error message from backend
+            return response.json().then(err => {
+                throw new Error(err.error || `HTTP error! status: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
     .then(result => {
         if (result.error) {
-            resultValue.textContent = 'Error';
-            console.error('Error:', result.error);
+            resultValue.textContent = `Error: ${result.error}`;
         } else {
             // Format as currency
-            const formattedProfit = new Intl.NumberFormat('en-US', {
+            const formattedResult = new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD'
             }).format(result.result);
-            resultValue.textContent = formattedProfit;
+            resultValue.textContent = formattedResult;
         }
     })
     .catch(error => {
-        resultValue.textContent = 'Failed';
+        resultValue.textContent = 'Prediction Failed';
         console.error('Fetch Error:', error);
     });
 });

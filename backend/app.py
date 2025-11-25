@@ -1,4 +1,3 @@
-# FILE: /backend/app.py (REVISI FIX)
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
@@ -9,12 +8,12 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 CORS(app)
 
-# --- KONEKSI DATABASE ---
+# KONEKSI DATABASE
 # Ganti password jika ada
 db_connection_str = 'mysql+pymysql://root:@localhost/finsight_db'
 db_connection = create_engine(db_connection_str)
 
-# --- LOAD MODEL ---
+# LOAD MODEL
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 try:
     print("Memuat model...")
@@ -26,7 +25,7 @@ except Exception as e:
     print(f"❌ Backend Error Loading Model: {e}")
     model_profit, model_qty, model_high = None, None, None
 
-# --- HELPER: FUNGSI TRANSLATOR (PENTING!) ---
+# HELPER: FUNGSI TRANSLATOR
 def fix_column_names(df):
     """
     Mengubah nama kolom dari format MySQL/JSON (Underscore)
@@ -38,41 +37,32 @@ def fix_column_names(df):
         'Promotion_Name': 'Promotion Name',
         'Product_Name': 'Product Name',
         'Unit_Cost': 'Unit Cost',
-        # Kolom lain biasanya aman (Region, City, Price, Channel)
-        # Tapi untuk jaga-jaga, pastikan huruf besar/kecil sesuai training
     }
     
-    # Rename kolom yang ada di mapping
     df_renamed = df.rename(columns=mapping)
     
     return df_renamed
 
-# --- API 1: OPTIONS ---
+# API 1: OPTIONS
 @app.route('/api/options', methods=['GET'])
 def get_options():
     try:
-        # Mengambil data unik dari MySQL
-        # Kita ambil nama kolom yg sudah pakai underscore di DB
         cols_query = [
             'Channel', 'Promotion_Name', 'Product_Name', 'Manufacturer', 
             'Product_Sub_Category', 'Product_Category', 'Region', 'City', 'Country'
         ]
         
-        # Query efisien (Select distinct untuk setiap kolom bisa berat, 
-        # tapi untuk data kecil/sedang ini oke. Atau cache hasilnya)
-        # Untuk simpelnya kita tarik data sampel lalu unique pandas
+        # Untuk simplenya, kita tarik data sampel lalu unique pandas
         query = "SELECT * FROM sales_data LIMIT 5000" 
         df = pd.read_sql(query, db_connection)
         
         options = {}
         for col in cols_query:
             if col in df.columns:
-                # Bersihkan NaN dan sort
                 options[col] = sorted(df[col].dropna().unique().tolist())
             else:
                 options[col] = []
         
-        # Tambahan statis
         options['date_month'] = [str(i) for i in range(1, 13)]
         options['date_day_of_week'] = [str(i) for i in range(0, 7)]
         
@@ -81,7 +71,7 @@ def get_options():
         print(f"Error di /api/options: {e}")
         return jsonify({'error': str(e)}), 500
 
-# --- API 2: PREDICT PROFIT ---
+# API 2: PREDICT PROFIT
 @app.route('/api/predict/profit', methods=['POST'])
 def predict_profit():
     if not model_profit: return jsonify({'error': 'Model Profit Failed Load'}), 500
@@ -89,21 +79,15 @@ def predict_profit():
         data = request.get_json()
         df_input = pd.DataFrame([data])
         
-        # --- LANGKAH PERBAIKAN: RENAME KOLOM ---
         df_ready = fix_column_names(df_input)
-        
-        # Cek kolom yang dibutuhkan model vs yang ada
-        # (Opsional: Print untuk debugging di terminal)
-        # print(f"Kolom Input: {df_ready.columns.tolist()}")
         
         pred = model_profit.predict(df_ready)[0]
         return jsonify({'result': float(pred)})
     except Exception as e:
         print(f"Error Profit: {e}")
-        # Kirim detail error ke frontend agar gampang debug
         return jsonify({'error': str(e)}), 400
 
-# --- API 3: PREDICT QUANTITY ---
+# API 3: PREDICT QUANTITY
 @app.route('/api/predict/quantity', methods=['POST'])
 def predict_quantity():
     if not model_qty: return jsonify({'error': 'Model Quantity Failed Load'}), 500
@@ -111,10 +95,8 @@ def predict_quantity():
         data = request.get_json()
         df_input = pd.DataFrame([data])
         
-        # --- LANGKAH PERBAIKAN: RENAME KOLOM ---
         df_ready = fix_column_names(df_input)
         
-        # Pastikan tipe data numerik
         if 'Price' in df_ready.columns: df_ready['Price'] = pd.to_numeric(df_ready['Price'])
         if 'Unit Cost' in df_ready.columns: df_ready['Unit Cost'] = pd.to_numeric(df_ready['Unit Cost'])
 
@@ -124,7 +106,7 @@ def predict_quantity():
         print(f"Error Quantity: {e}")
         return jsonify({'error': str(e)}), 400
 
-# --- API 4: PREDICT CLASSIFICATION ---
+# API 4: PREDICT CLASSIFICATION
 @app.route('/api/predict/high_profit_classifier', methods=['POST'])
 def predict_classifier():
     if not model_high: return jsonify({'error': 'Model Class Failed Load'}), 500
@@ -132,7 +114,6 @@ def predict_classifier():
         data = request.get_json()
         df_input = pd.DataFrame([data])
         
-        # --- LANGKAH PERBAIKAN: RENAME KOLOM ---
         df_ready = fix_column_names(df_input)
         
         pred = model_high.predict(df_ready)[0]
@@ -142,5 +123,5 @@ def predict_classifier():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    # Host 0.0.0.0 agar bisa diakses IP lain jika perlu
+    # Host 0.0.0.0 agar bisa diakses dari IP lain jika perlu
     app.run(port=5000, debug=True, host='0.0.0.0')

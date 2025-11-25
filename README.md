@@ -1,3 +1,6 @@
+Untuk versi Bahasa Indonesia, silakan scroll ke bawah.
+
+
 # FINSIGHT: Business Analysis and Prediction Web App
 
 FINSIGHT is a web application for business analysis and prediction that uses machine learning. This application is capable of performing three main predictions:
@@ -117,5 +120,124 @@ Flask
 5.  **Access the application**:
     - Open a browser and go to `http://127.0.0.1:8000`.
 
+
 ---
-*This README was generated based on `overview.txt` and `cara run.txt`.*
+
+# FINSIGHT: Aplikasi Web Analisis dan Prediksi Bisnis
+
+FINSIGHT adalah aplikasi web untuk analisis dan prediksi bisnis yang menggunakan machine learning. Aplikasi ini mampu melakukan tiga prediksi utama:
+1.  **Prediksi Profit**: Memperkirakan keuntungan dari transaksi di masa depan.
+2.  **Prediksi Kuantitas**: Memperkirakan jumlah barang yang akan dipesan.
+3.  **Klasifikasi Profit Tinggi**: Menentukan apakah sebuah transaksi berpotensi menghasilkan keuntungan tinggi.
+
+Aplikasi ini bertujuan untuk membantu pengambilan keputusan bisnis berdasarkan data historis.
+
+---
+
+## Arsitektur
+
+Aplikasi ini menggunakan arsitektur microservices, yang berarti frontend (antarmuka pengguna) dan backend (logika aplikasi) berjalan sebagai dua layanan terpisah.
+
+### 1. Backend (Port 5000)
+- Dibangun dengan Python dan framework Flask.
+- Berperan sebagai API (Application Programming Interface).
+- Menangani semua logika bisnis, koneksi ke database (MySQL), dan komputasi machine learning.
+- Memuat model `.pkl` saat dijalankan untuk melakukan prediksi.
+
+### 2. Frontend (Port 8000)
+- Dibangun dengan Python dan framework Flask, khusus untuk menyajikan halaman web.
+- Bertanggung jawab untuk menampilkan antarmuka pengguna (UI) melalui halaman HTML.
+- Berkomunikasi dengan backend untuk mendapatkan data dan mengirim permintaan prediksi.
+
+---
+
+## Struktur Folder
+
+Berikut adalah penjelasan mengenai file-file penting dalam proyek ini:
+
+-   `FINSIGHT/`
+    -   `overview.txt`: File ini berisi penjelasan umum mengenai proyek.
+    -   `cara run.txt`: Petunjuk untuk menjalankan server frontend dan backend.
+    -   `company_data.csv`: Dataset mentah yang digunakan untuk melatih model machine learning.
+    -   `prototype.ipynb`: Jupyter Notebook yang berisi seluruh proses eksperimen, mulai dari pembersihan data, rekayasa fitur, hingga pelatihan dan penyimpanan model machine learning.
+    -   `migrate_db.py`: Skrip untuk memigrasikan data dari `company_data.csv` ke dalam database MySQL.
+    -   `backend/`:
+        -   `app.py`: Inti dari backend. Ini adalah server API Flask yang menerima, memproses permintaan dengan model ML, dan memberikan respons.
+        -   `requirements.txt`: Daftar pustaka Python yang dibutuhkan oleh backend.
+        -   `models/`: Direktori yang berisi model-model machine learning yang sudah dilatih dan siap pakai (`.pkl`).
+    -   `frontend/`:
+        -   `app.py`: Server web Flask yang bertanggung jawab untuk menampilkan halaman HTML (template) kepada pengguna.
+        -   `templates/`: Berisi file-file HTML yang membentuk antarmuka aplikasi.
+        -   `static/`: Berisi file-file statis seperti CSS untuk styling (`style.css`) dan gambar (`images/`).
+
+---
+
+## Alur Kerja API (GET & POST)
+
+Interaksi antara frontend dan backend terjadi melalui dua jenis permintaan utama:
+
+### 1. Alur GET (Mengambil Opsi untuk Formulir)
+
+Alur ini terjadi saat pengguna pertama kali memuat halaman prediksi (misalnya, halaman "Prediksi Profit"). Tujuannya adalah untuk mengisi opsi-opsi dalam formulir (misalnya, daftar negara, kategori produk, dll.).
+
+1.  Pengguna membuka halaman di browser, misalnya `http://127.0.0.1:8000/profit`.
+2.  Server Frontend (`frontend/app.py`) menerima permintaan ini.
+3.  Sebelum menampilkan halaman HTML, Server Frontend mengirimkan permintaan `GET` ke API Backend di `http://127.0.0.1:5000/api/options`.
+4.  API Backend (`backend/app.py`) menerima permintaan `GET`, mengambil data unik dari database (seperti daftar negara, kota, kategori), lalu mengirimkannya kembali ke Server Frontend dalam format JSON.
+5.  Server Frontend menerima data JSON ini dan menyuntikkannya ke dalam template HTML (`profit_page.html`), sehingga formulir dapat menampilkan semua opsi yang tersedia.
+6.  Halaman HTML yang lengkap ditampilkan di browser pengguna.
+
+### 2. Alur POST (Mengirim Data untuk Prediksi)
+
+Alur ini terjadi saat pengguna telah mengisi formulir dan menekan tombol "Prediksi".
+
+1.  Pengguna mengisi data pada formulir di browser dan menekan tombol "Prediksi".
+2.  JavaScript di Browser Pengguna mengambil semua data dari formulir.
+3.  JavaScript di Browser Pengguna mengirimkan permintaan `POST` langsung ke endpoint API Backend yang sesuai (misalnya, `http://127.0.0.1:5000/api/predict/profit`). Data formulir dikirim dalam format JSON.
+4.  API Backend (`backend/app.py`) menerima data JSON, memprosesnya, dan memasukkannya ke dalam model machine learning yang sesuai.
+5.  Model ML menghasilkan prediksi (misalnya, angka profit).
+6.  API Backend mengirimkan hasil prediksi kembali ke Browser Pengguna dalam format JSON.
+7.  JavaScript di Browser Pengguna menerima hasil prediksi dan menampilkannya di halaman tanpa perlu memuat ulang seluruh halaman.
+
+---
+
+## Prasyarat
+
+- Python 3.x
+- XAMPP
+- Lingkungan virtual (disarankan)
+
+## Ketergantungan
+
+### Backend
+```
+Flask
+pandas
+scikit-learn
+```
+
+### Frontend
+```
+Flask
+```
+
+---
+
+## Cara Menjalankan Proyek
+
+1.  **Mulai server database**: Pastikan aplikasi XAMPP terbuka dan modul "MySQL Database" sudah dimulai (Running).
+2.  **Migrasikan database**: Jika database `finsight_db` belum dibuat, jalankan skrip `migrate_db.py`.
+3.  **Jalankan backend**:
+    - Buka terminal baru.
+    - Arahkan ke direktori `backend`.
+    - Aktifkan lingkungan virtual.
+    - Jalankan perintah: `python app.py`
+    - Tunggu hingga muncul pesan: "Running on http://127.0.0.1:5000"
+4.  **Jalankan frontend**:
+    - Buka tab atau jendela terminal baru.
+    - Arahkan ke direktori `frontend`.
+    - Aktifkan lingkungan virtual.
+    - Jalankan perintah: `python app.py`
+    - Tunggu hingga muncul pesan: "Running on http://127.0.0.1:8000"
+5.  **Akses aplikasi**:
+    - Buka browser dan pergi ke `http://127.0.0.1:8000`.
