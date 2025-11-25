@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Overall Dashboard - FINSIGHT{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">📊 Overall Prediction Dashboard</h2>
+        <p class="text-muted" style="max-width: 700px; margin: auto;">
+            Jalankan ketiga model AI sekaligus untuk mendapatkan analisis bisnis 360 derajat: 
+            Profitabilitas, Volume Penjualan, dan Rekomendasi Strategis.
+        </p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold text-dark">🎛️ Input Parameters</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="overall-form">
+                        <div class="row g-3">
+                            
+                            <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-2">Financials</h6></div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Price ($)</label>
+                                <input type="number" class="form-control" name="Price" step="0.01" placeholder="e.g. 150.50" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Unit Cost ($)</label>
+                                <input type="number" class="form-control" name="Unit_Cost" step="0.01" placeholder="e.g. 100.25" required>
+                            </div>
+
+                            <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-3">Product Details</h6></div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small">Manufacturer</label>
+                                <select class="form-select" name="Manufacturer" required>
+                                    {% for item in form_data['Manufacturer'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Category</label>
+                                <select class="form-select" name="Product_Category" required>
+                                    {% for item in form_data['Product_Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Sub-Category</label>
+                                <select class="form-select" name="Product_Sub_Category" required>
+                                    {% for item in form_data['Product_Sub_Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Product Name (Type to search)</label>
+                                <input class="form-control" list="productOptions" name="Product_Name" placeholder="Type product name..." required>
+                                <datalist id="productOptions">
+                                    {% for item in form_data['Product_Name'] %}<option value="{{ item }}">{% endfor %}
+                                </datalist>
+                            </div>
+
+                            <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-3">Location & Strategy</h6></div>
+
+                            <div class="col-md-4">
+                                <label class="form-label small">Region</label>
+                                <select class="form-select" name="Region" required>
+                                    {% for item in form_data['Region'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small">Country</label>
+                                <select class="form-select" name="Country" required>
+                                    {% for item in form_data['Country'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small">City</label>
+                                <input class="form-control" list="cityOptions" name="City" placeholder="Type city..." required>
+                                <datalist id="cityOptions">
+                                    {% for item in form_data['City'] %}<option value="{{ item }}">{% endfor %}
+                                </datalist>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small">Channel</label>
+                                <select class="form-select" name="Channel" required>
+                                    {% for item in form_data['Channel'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Promotion</label>
+                                <select class="form-select" name="Promotion_Name" required>
+                                    {% for item in form_data['Promotion_Name'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small">Month</label>
+                                <select class="form-select" name="date_month" required>
+                                    {% for item in form_data['date_month'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Day of Week</label>
+                                <select class="form-select" name="date_day_of_week" required>
+                                    {% for item in form_data['date_day_of_week'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg" id="predictBtn">🚀 Run All Predictions</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="sticky-top" style="top: 90px; z-index: 1;">
+                
+                <div class="card shadow-sm border-0 mb-3 border-start border-4 border-success">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small fw-bold mb-2">💰 Predicted Profit</h6>
+                        <h2 class="fw-bold text-success mb-0" id="overall-profit-result">$0.00</h2>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm border-0 mb-3 border-start border-4 border-info">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small fw-bold mb-2">📦 Predicted Quantity</h6>
+                        <h2 class="fw-bold text-info mb-0" id="overall-quantity-result">0 <span class="fs-6 text-muted">Units</span></h2>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm border-0 border-start border-4 border-warning">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small fw-bold mb-2">🎯 High-Profit Potential</h6>
+                        <h2 class="fw-bold text-dark mb-0" id="overall-classification-result">-</h2>
+                        <p class="small text-muted mt-1 mb-0">Recommendation based on strategic fit.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('overall-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('predictBtn');
+    const profitEl = document.getElementById('overall-profit-result');
+    const quantityEl = document.getElementById('overall-quantity-result');
+    const classEl = document.getElementById('overall-classification-result');
+
+    // Loading State
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+    profitEl.innerHTML = '<span class="spinner-grow spinner-grow-sm"></span>';
+    quantityEl.innerHTML = '<span class="spinner-grow spinner-grow-sm"></span>';
+    classEl.innerHTML = '<span class="spinner-grow spinner-grow-sm"></span>';
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+
+    // Helper function untuk fetch API
+    const fetchApi = (endpoint) => {
+        // Gunakan global BACKEND_URL dari base.html
+        return fetch(`${BACKEND_URL}/predict/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json());
+    };
+
+    // Jalankan 3 request secara paralel
+    Promise.all([
+        fetchApi('profit'),
+        fetchApi('quantity'),
+        fetchApi('high_profit_classifier')
+    ])
+    .then(([profitData, quantityData, classData]) => {
+        
+        // 1. Update Profit
+        if(profitData.error) profitEl.innerText = "Error";
+        else {
+            profitEl.innerText = new Intl.NumberFormat('en-US', { 
+                style: 'currency', currency: 'USD' 
+            }).format(profitData.result);
+        }
+
+        // 2. Update Quantity
+        if(quantityData.error) quantityEl.innerText = "Error";
+        else {
+            quantityEl.innerHTML = `${Math.round(quantityData.result)} <span class="fs-6 text-muted">Units</span>`;
+        }
+
+        // 3. Update Classification
+        if(classData.error) classEl.innerText = "Error";
+        else {
+            const isHigh = classData.result === 1;
+            classEl.innerHTML = isHigh 
+                ? '<span class="text-success">YES (High Profit)</span>' 
+                : '<span class="text-danger">NO (Low Profit)</span>';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Terjadi kesalahan koneksi ke Backend.");
+        profitEl.innerText = "-";
+        quantityEl.innerText = "-";
+        classEl.innerText = "-";
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Run All Predictions';
+    });
+});
+</script>
+{% endblock %}

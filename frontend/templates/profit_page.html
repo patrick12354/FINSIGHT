@@ -15,9 +15,9 @@
                         <form id="profit-form">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="Product Sub Category" class="form-label">Product Sub Category</label>
-                                    <select class="form-select" id="Product Sub Category" name="Product Sub Category">
-                                        {% for option in form_data['Product Sub Category'] %}
+                                    <label for="Product_Sub_Category" class="form-label">Product Sub Category</label>
+                                    <select class="form-select" id="Product_Sub_Category" name="Product_Sub_Category">
+                                        {% for option in form_data['Product_Sub_Category'] %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
@@ -55,9 +55,9 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="Promotion Name" class="form-label">Promotion Name</label>
-                                    <select class="form-select" id="Promotion Name" name="Promotion Name">
-                                        {% for option in form_data['Promotion Name'] %}
+                                    <label for="Promotion_Name" class="form-label">Promotion Name</label>
+                                    <select class="form-select" id="Promotion_Name" name="Promotion_Name">
+                                        {% for option in form_data['Promotion_Name'] %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
@@ -99,13 +99,16 @@ document.getElementById('profit-form').addEventListener('submit', function(e) {
     
     const form = e.target;
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key.replace(/ /g, '_')] = value;
+    });
 
     // Show loading state
     const resultValue = document.getElementById('profit-result-value');
     resultValue.textContent = '...';
 
-    fetch('/predict/profit', {
+    fetch('http://127.0.0.1:5000/api/predict/profit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -122,7 +125,7 @@ document.getElementById('profit-form').addEventListener('submit', function(e) {
             const formattedProfit = new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD'
-            }).format(result.profit);
+            }).format(result.result);
             resultValue.textContent = formattedProfit;
         }
     })

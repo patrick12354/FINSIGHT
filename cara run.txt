@@ -1,0 +1,46 @@
+=============================================================
+PANDUAN MENJALANKAN PROJECT FINSIGHT (MICROSERVICES)
+=============================================================
+
+PRASYARAT:
+1. Pastikan aplikasi XAMPP sudah dibuka.
+2. Pastikan module "MySQL Database" di XAMPP sudah di-Start (Running).
+
+-------------------------------------------------------------
+LANGKAH 1: MENJALANKAN BACKEND (API SERVER - PORT 5000)
+-------------------------------------------------------------
+1. Buka aplikasi Terminal baru.
+2. Copy-paste perintah berikut baris per baris:
+
+cd "/Users/timotiuspatrick/Documents/Patrick/Kuliah & Coding"
+source .venv/bin/activate
+cd FINSIGHT/backend
+python app.py
+
+> Tunggu sampai muncul tulisan: "Running on http://127.0.0.1:5000"
+> JANGAN tutup terminal ini. Biarkan berjalan.
+
+-------------------------------------------------------------
+LANGKAH 2: MENJALANKAN FRONTEND (WEB SERVER - PORT 8000)
+-------------------------------------------------------------
+1. Buka tab terminal baru (tekan Command + T) atau jendela terminal baru.
+2. Copy-paste perintah berikut baris per baris:
+
+cd "/Users/timotiuspatrick/Documents/Patrick/Kuliah & Coding"
+source .venv/bin/activate
+cd FINSIGHT/frontend
+python app.py
+
+> Tunggu sampai muncul tulisan: "Running on http://127.0.0.1:8000"
+
+-------------------------------------------------------------
+LANGKAH 3: AKSES APLIKASI
+-------------------------------------------------------------
+1. Buka Browser (Chrome/Safari).
+2. Akses alamat: http://127.0.0.1:8000
+
+-------------------------------------------------------------
+CATATAN TAMBAHAN:
+- Untuk mematikan server, tekan CTRL + C di masing-masing terminal.
+- Jika terjadi error "Address already in use", berarti server belum mati sempurna. 
+  Tutup terminal dan coba lagi.

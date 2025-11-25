@@ -1,0 +1,95 @@
+# Ringkasan Proyek FINSIGHT
+
+FINSIGHT adalah aplikasi web untuk analisis dan prediksi bisnis yang menggunakan machine learning. Aplikasi ini mampu melakukan tiga prediksi utama:
+1.  Prediksi Profit: Memperkirakan keuntungan dari sebuah transaksi di masa depan.
+2.  Prediksi Kuantitas: Memperkirakan jumlah barang yang akan dipesan.
+3.  Klasifikasi Profit Tinggi: Menentukan apakah sebuah transaksi berpotensi menghasilkan keuntungan tinggi.
+
+Aplikasi ini bertujuan membantu pengambilan keputusan bisnis berdasarkan data historis.
+
+---
+
+# Arsitektur
+
+Aplikasi ini menggunakan arsitektur microservices, yang berarti frontend (antarmuka pengguna) dan backend (logika aplikasi) beroperasi sebagai dua layanan terpisah.
+
+1.  Backend (Port 5000)
+    -   Dibuat dengan Python dan framework Flask.
+    -   Bertugas sebagai API (Application Programming Interface).
+    -   Menangani semua logika bisnis, koneksi ke database (MySQL), dan komputasi machine learning.
+    -   Memuat model-model `.pkl` saat dijalankan untuk membuat prediksi.
+
+2.  Frontend (Port 8000)
+    -   Dibuat dengan Python dan framework Flask, berfungsi khusus untuk menyajikan halaman web.
+    -   Bertugas untuk menampilkan antarmuka pengguna (UI) melalui halaman HTML.
+    -   Berkomunikasi dengan backend untuk mendapatkan data serta mengirim permintaan prediksi.
+
+---
+
+# Susunan File dan Direktori
+
+Berikut adalah penjelasan untuk file-file penting dalam proyek ini:
+
+-   `overview.txt`
+    -   File ini berisi penjelasan umum proyek.
+
+-   `cara run.txt`
+    -   Instruksi untuk menjalankan server frontend dan backend.
+
+-   `company_data.csv`
+    -   Dataset mentah yang digunakan untuk melatih model machine learning.
+
+-   `prototype.ipynb`
+    -   Jupyter Notebook yang berisi seluruh proses eksperimen, mulai dari pembersihan data, rekayasa fitur, hingga pelatihan dan penyimpanan model machine learning.
+
+-   `migrate_db.py`
+    -   Skrip untuk memigrasikan data dari `company_data.csv` ke dalam database MySQL.
+
+-   `backend/`
+    -   `app.py`: Inti dari backend. Merupakan server API Flask yang menerima, memproses permintaan dengan model ML, dan memberikan respons.
+    -   `requirements.txt`: Daftar library Python yang dibutuhkan oleh backend.
+    -   `models/`: Direktori berisi model-model machine learning yang sudah dilatih dan siap pakai (`.pkl`).
+
+-   `frontend/`
+    -   `app.py`: Server web Flask yang bertugas menampilkan halaman HTML (templates) kepada pengguna.
+    -   `templates/`: Berisi file-file HTML yang menjadi tampilan aplikasi.
+    -   `static/`: Berisi file-file statis seperti CSS untuk styling (`style.css`) dan gambar (`images/`).
+
+---
+
+# Alur Kerja API (GET & POST)
+
+Interaksi antara frontend dan backend berlangsung melalui dua jenis permintaan utama:
+
+## 1. Alur GET (Mengambil Opsi untuk Formulir)
+
+Alur ini terjadi saat pengguna pertama kali memuat halaman prediksi (contoh: halaman "Profit Prediction"). Tujuannya adalah untuk mengisi pilihan pada formulir (contoh: daftar negara, kategori produk, dll).
+
+1.  Pengguna membuka halaman di browser, contohnya `http://127.0.0.1:8000/profit`.
+2.  Server Frontend (`frontend/app.py`) menerima permintaan ini.
+3.  Sebelum menampilkan halaman HTML, Server Frontend mengirim permintaan `GET` ke API Backend di alamat `http://127.0.0.1:5000/api/options`.
+4.  API Backend (`backend/app.py`) menerima permintaan `GET`, mengambil data unik dari database (seperti daftar negara, kota, kategori), kemudian mengirimkannya kembali ke Server Frontend dalam format JSON.
+5.  Server Frontend menerima data JSON tersebut dan menyajikannya ke dalam template HTML (`profit_page.html`), sehingga formulir dapat menampilkan semua pilihan yang tersedia.
+6.  Halaman HTML lengkap ditampilkan di browser pengguna.
+
+## 2. Alur POST (Mengirim Data untuk Prediksi)
+
+Alur ini terjadi saat pengguna telah mengisi formulir dan menekan tombol "Predict".
+
+1.  Pengguna mengisi data pada formulir di browser dan menekan tombol "Predict".
+2.  JavaScript di Browser Pengguna mengambil seluruh data dari formulir tersebut.
+3.  JavaScript di Browser Pengguna mengirimkan permintaan `POST` langsung ke API Backend di alamat yang sesuai (contoh: `http://127.0.0.1:5000/api/predict/profit`). Data formulir dikirim dalam format JSON.
+4.  API Backend (`backend/app.py`) menerima data JSON, memprosesnya, memasukkannya ke model machine learning yang sesuai.
+5.  Model ML menghasilkan prediksi (contoh: angka profit).
+6.  API Backend mengirimkan hasil prediksi tersebut kembali ke Browser Pengguna dalam format JSON.
+7.  JavaScript di Browser Pengguna menerima hasil prediksi dan menampilkannya di halaman tanpa perlu memuat ulang seluruh halaman.
+
+---
+
+# Cara Menjalankan Proyek
+
+1.  Pastikan server database (seperti XAMPP) sudah berjalan dan database `finsight_db` sudah dibuat (gunakan `migrate_db.py` jika perlu).
+2.  Buka dua terminal.
+3.  Di terminal pertama, masuk ke direktori `backend/` dan jalankan: `python app.py`
+4.  Di terminal kedua, masuk ke direktori `frontend/` dan jalankan: `python app.py`
+5.  Buka browser dan akses `http://127.0.0.1:8000`.

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}High-Profit Classification - FINSIGHT{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-primary">🎯 High-Profit Classifier</h2>
+                <p class="text-muted">AI Recommendation System: Determine if a sales strategy will yield High Profit (YES) or Low Profit (NO).</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3 border-bottom">
+                            <h5 class="mb-0 fw-bold text-dark">📋 Strategy Parameters</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="classification-form">
+                                <div class="row g-3">
+                                    
+                                    <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-2">Product Info</h6></div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Manufacturer</label>
+                                        <select class="form-select" name="Manufacturer" required>
+                                            {% for option in form_data['Manufacturer'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Category</label>
+                                        <select class="form-select" name="Product_Category" required>
+                                            {% for option in form_data['Product_Category'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Sub-Category</label>
+                                        <select class="form-select" name="Product_Sub_Category" required>
+                                            {% for option in form_data['Product_Sub_Category'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Product Name (Type to search)</label>
+                                        <input class="form-control" list="productOptions" name="Product_Name" placeholder="Type product name..." required>
+                                        <datalist id="productOptions">
+                                            {% for option in form_data['Product_Name'] %}<option value="{{ option }}">{% endfor %}
+                                        </datalist>
+                                    </div>
+
+                                    <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-3">Location & Channel</h6></div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Region</label>
+                                        <select class="form-select" name="Region" required>
+                                            {% for option in form_data['Region'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Country</label>
+                                        <select class="form-select" name="Country" required>
+                                            {% for option in form_data['Country'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">City (Type to search)</label>
+                                        <input class="form-control" list="cityOptions" name="City" placeholder="Type city..." required>
+                                        <datalist id="cityOptions">
+                                            {% for option in form_data['City'] %}<option value="{{ option }}">{% endfor %}
+                                        </datalist>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Channel</label>
+                                        <select class="form-select" name="Channel" required>
+                                            {% for option in form_data['Channel'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-3">Time & Promotion</h6></div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label small">Promotion Name</label>
+                                        <select class="form-select" name="Promotion_Name" required>
+                                            {% for option in form_data['Promotion_Name'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Month</label>
+                                        <select class="form-select" name="date_month" required>
+                                            {% for option in form_data['date_month'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Day of Week</label>
+                                        <select class="form-select" name="date_day_of_week" required>
+                                            {% for option in form_data['date_day_of_week'] %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="predictBtn">
+                                        Get Recommendation
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card shadow-sm border-0 h-100 bg-light">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center p-5">
+                            <h5 class="text-muted text-uppercase small fw-bold mb-3">AI Recommendation</h5>
+                            
+                            <div id="resultContainer">
+                                <h1 class="display-4 fw-bold text-muted" id="resultValue">-</h1>
+                                <p class="text-muted small mt-2" id="resultDesc">Fill the form to classify.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('classification-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('predictBtn');
+    const resultValue = document.getElementById('resultValue');
+    const resultDesc = document.getElementById('resultDesc');
+
+    // Loading State
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing...';
+    resultValue.innerHTML = '<span class="spinner-grow text-primary"></span>';
+
+    // Ambil data form
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+
+    // Gunakan global BACKEND_URL dari base.html
+    // Endpoint sesuai backend/app.py: /api/predict/classification
+    fetch(`${BACKEND_URL}/predict/classification`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.error) {
+            resultValue.innerHTML = '<span class="text-danger">Error</span>';
+            resultDesc.innerText = result.error;
+        } else {
+            const isHigh = result.result === 1;
+            
+            if (isHigh) {
+                resultValue.innerHTML = '<span class="text-success">YES</span>';
+                resultDesc.innerHTML = '<span class="badge bg-success fs-6">High Profit Potential</span>';
+            } else {
+                resultValue.innerHTML = '<span class="text-danger">NO</span>';
+                resultDesc.innerHTML = '<span class="badge bg-danger fs-6">Low Profit Potential</span>';
+            }
+        }
+    })
+    .catch(error => {
+        resultValue.innerHTML = '<span class="text-danger">Failed</span>';
+        console.error('Fetch Error:', error);
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerText = 'Get Recommendation';
+    });
+});
+</script>
+{% endblock %}

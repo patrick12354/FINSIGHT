@@ -1,47 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}High-Profit Classification - FINSIGHT{% endblock %}
+{% block title %}Quantity Prediction - FINSIGHT{% endblock %}
 
 {% block content %}
 <div class="content-section">
     <div class="container">
-        <h2 class="section-title">High-Profit Classification Model</h2>
+        <h2 class="section-title">Quantity Prediction Model</h2>
         <div class="row g-5">
             <!-- Input Form -->
             <div class="col-lg-7">
                 <div class="card form-container">
                     <div class="card-header">Input Parameters</div>
                     <div class="card-body">
-                        <form id="classification-form">
+                        <form id="quantity-form">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="Product Sub Category" class="form-label">Product Sub Category</label>
-                                    <select class="form-select" id="Product Sub Category" name="Product Sub Category">
-                                        {% for option in form_data['Product Sub Category'] %}
-                                        <option value="{{ option }}">{{ option }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <label for="Price" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="Price" name="Price" step="0.01" placeholder="Contoh: 150.50" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="City" class="form-label">City</label>
-                                    <select class="form-select" id="City" name="City">
-                                        {% for option in form_data['City'] %}
-                                        <option value="{{ option }}">{{ option }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <label for="Unit_Cost" class="form-label">Unit Cost</label>
+                                    <input type="number" class="form-control" id="Unit_Cost" name="Unit_Cost" step="0.01" placeholder="Contoh: 100.25" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="Manufacturer" class="form-label">Manufacturer</label>
-                                    <select class="form-select" id="Manufacturer" name="Manufacturer">
-                                        {% for option in form_data['Manufacturer'] %}
-                                        <option value="{{ option }}">{{ option }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="Product Category" class="form-label">Product Category</label>
-                                    <select class="form-select" id="Product Category" name="Product Category">
-                                        {% for option in form_data['Product Category'] %}
+                                    <label for="Product_Category" class="form-label">Product Category</label>
+                                    <select class="form-select" id="Product_Category" name="Product_Category">
+                                        {% for option in form_data['Product_Category'] %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
@@ -63,15 +47,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="Promotion Name" class="form-label">Promotion Name</label>
-                                    <select class="form-select" id="Promotion Name" name="Promotion Name">
-                                        {% for option in form_data['Promotion Name'] %}
+                                    <label for="Promotion_Name" class="form-label">Promotion Name</label>
+                                    <select class="form-select" id="Promotion_Name" name="Promotion_Name">
+                                        {% for option in form_data['Promotion_Name'] %}
                                         <option value="{{ option }}">{{ option }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-3">Classify Transaction</button>
+                            <button type="submit" class="btn btn-primary mt-3">Predict Quantity</button>
                         </form>
                     </div>
                 </div>
@@ -80,9 +64,9 @@
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header">Prediction Result</div>
-                    <div class="card-body result-container" id="classification-result-container">
-                        <h4>Is High Profit?</h4>
-                        <p class="result-value" id="classification-result-value">-</p>
+                    <div class="card-body result-container" id="quantity-result-container">
+                        <h4>Predicted Quantity</h4>
+                        <p class="result-value" id="quantity-result-value">0</p>
                         <small class="text-muted">Result will be updated after prediction.</small>
                     </div>
                 </div>
@@ -94,17 +78,20 @@
 
 {% block scripts %}
 <script>
-document.getElementById('classification-form').addEventListener('submit', function(e) {
+document.getElementById('quantity-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const form = e.target;
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key.replace(/ /g, '_')] = value;
+    });
 
-    const resultValue = document.getElementById('classification-result-value');
+    const resultValue = document.getElementById('quantity-result-value');
     resultValue.textContent = '...';
 
-    fetch('/predict/classification', {
+    fetch('http://127.0.0.1:5000/api/predict/quantity', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -117,7 +104,7 @@ document.getElementById('classification-form').addEventListener('submit', functi
             resultValue.textContent = 'Error';
             console.error('Error:', result.error);
         } else {
-            resultValue.textContent = result.high_profit === 1 ? 'Yes' : 'No';
+            resultValue.textContent = Math.round(result.result);
         }
     })
     .catch(error => {
