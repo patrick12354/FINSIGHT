@@ -1,0 +1,121 @@
+# FINSIGHT: Business Analysis and Prediction Web App
+
+FINSIGHT is a web application for business analysis and prediction that uses machine learning. This application is capable of performing three main predictions:
+1.  **Profit Prediction**: Estimates the profit from a future transaction.
+2.  **Quantity Prediction**: Estimates the number of items that will be ordered.
+3.  **High Profit Classification**: Determines whether a transaction has the potential to generate high profits.
+
+This application aims to assist in business decision-making based on historical data.
+
+---
+
+## Architecture
+
+This application uses a microservices architecture, which means the frontend (user interface) and backend (application logic) operate as two separate services.
+
+### 1. Backend (Port 5000)
+- Built with Python and the Flask framework.
+- Serves as an API (Application Programming Interface).
+- Handles all business logic, connection to the database (MySQL), and machine learning computations.
+- Loads `.pkl` models when run to make predictions.
+
+### 2. Frontend (Port 8000)
+- Built with Python and the Flask framework, specifically for serving web pages.
+- Responsible for displaying the user interface (UI) through HTML pages.
+- Communicates with the backend to get data and send prediction requests.
+
+---
+
+## Folder Structure
+
+Here is an explanation of the important files in this project:
+
+-   `FINSIGHT/`
+    -   `overview.txt`: This file contains a general explanation of the project.
+    -   `cara run.txt`: Instructions for running the frontend and backend servers.
+    -   `company_data.csv`: The raw dataset used to train the machine learning models.
+    -   `prototype.ipynb`: Jupyter Notebook containing the entire experimental process, from data cleaning, feature engineering, to training and saving the machine learning models.
+    -   `migrate_db.py`: A script to migrate data from `company_data.csv` into a MySQL database.
+    -   `backend/`:
+        -   `app.py`: The core of the backend. It is a Flask API server that receives, processes requests with ML models, and provides responses.
+        -   `requirements.txt`: A list of Python libraries required by the backend.
+        -   `models/`: A directory containing the pre-trained and ready-to-use machine learning models (`.pkl`).
+    -   `frontend/`:
+        -   `app.py`: A Flask web server responsible for displaying HTML pages (templates) to the user.
+        -   `templates/`: Contains HTML files that make up the application's interface.
+        -   `static/`: Contains static files such as CSS for styling (`style.css`) and images (`images/`).
+
+---
+
+## API Workflow (GET & POST)
+
+Interaction between the frontend and backend occurs through two main types of requests:
+
+### 1. GET Flow (Fetching Options for Forms)
+
+This flow occurs when the user first loads a prediction page (e.g., the "Profit Prediction" page). The purpose is to populate the options in the form (e.g., a list of countries, product categories, etc.).
+
+1.  The user opens a page in the browser, for example, `http://127.0.0.1:8000/profit`.
+2.  The Frontend Server (`frontend/app.py`) receives this request.
+3.  Before displaying the HTML page, the Frontend Server sends a `GET` request to the Backend API at `http://127.0.0.1:5000/api/options`.
+4.  The Backend API (`backend/app.py`) receives the `GET` request, retrieves unique data from the database (such as a list of countries, cities, categories), then sends it back to the Frontend Server in JSON format.
+5.  The Frontend Server receives this JSON data and injects it into the HTML template (`profit_page.html`), so the form can display all available options.
+6.  The complete HTML page is displayed in the user's browser.
+
+### 2. POST Flow (Sending Data for Prediction)
+
+This flow occurs when the user has filled out the form and presses the "Predict" button.
+
+1.  The user fills in the data on the form in the browser and presses the "Predict" button.
+2.  JavaScript in the User's Browser retrieves all the data from the form.
+3.  JavaScript in the User's Browser sends a `POST` request directly to the corresponding Backend API endpoint (e.g., `http://127.0.0.1:5000/api/predict/profit`). The form data is sent in JSON format.
+4.  The Backend API (`backend/app.py`) receives the JSON data, processes it, and feeds it into the appropriate machine learning model.
+5.  The ML model generates a prediction (e.g., a profit figure).
+6.  The Backend API sends the prediction result back to the User's Browser in JSON format.
+7.  JavaScript in the User's Browser receives the prediction result and displays it on the page without needing to reload the entire page.
+
+---
+
+## Prerequisites
+
+- Python 3.x
+- XAMPP
+- Virtual environment (recommended)
+
+## Dependencies
+
+### Backend
+```
+Flask
+pandas
+scikit-learn
+```
+
+### Frontend
+```
+Flask
+```
+
+---
+
+## How to Run the Project
+
+1.  **Start the database server**: Make sure the XAMPP application is open and the "MySQL Database" module is started (Running).
+2.  **Migrate the database**: If the `finsight_db` database has not been created, run the `migrate_db.py` script.
+3.  **Run the backend**:
+    - Open a new terminal.
+    - Navigate to the `backend` directory.
+    - Activate the virtual environment.
+    - Run the command: `python app.py`
+    - Wait until you see the message: "Running on http://127.0.0.1:5000"
+4.  **Run the frontend**:
+    - Open a new terminal tab or window.
+    - Navigate to the `frontend` directory.
+    - Activate the virtual environment.
+    - Run the command: `python app.py`
+    - Wait until you see the message: "Running on http://127.0.0.1:8000"
+5.  **Access the application**:
+    - Open a browser and go to `http://127.0.0.1:8000`.
+
+---
+*This README was generated based on `overview.txt` and `cara run.txt`.*
