@@ -3,18 +3,14 @@ from flask_cors import CORS
 import pandas as pd
 import joblib
 import os
-from sqlalchemy import create_engine
 
 app = Flask(__name__)
 CORS(app)
 
-# KONEKSI DATABASE
-# Ganti password jika ada
-db_connection_str = 'mysql+pymysql://root:@localhost/finsight_db'
-db_connection = create_engine(db_connection_str)
-
 # LOAD MODEL
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, '..', 'company_data.csv')
+
 try:
     print("Memuat model...")
     model_profit = joblib.load(os.path.join(BASE_DIR, 'models/model_profit_predictor.pkl'))
@@ -52,9 +48,10 @@ def get_options():
             'Product_Sub_Category', 'Product_Category', 'Region', 'City', 'Country'
         ]
         
-        # Untuk simplenya, kita tarik data sampel lalu unique pandas
-        query = "SELECT * FROM sales_data LIMIT 5000" 
-        df = pd.read_sql(query, db_connection)
+        # Langsung baca dari CSV
+        df = pd.read_csv(CSV_PATH)
+        # Ganti spasi di nama kolom dengan underscore agar konsisten
+        df.columns = [c.replace(' ', '_') for c in df.columns]
         
         options = {}
         for col in cols_query:

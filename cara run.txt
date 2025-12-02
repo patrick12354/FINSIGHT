@@ -2,39 +2,49 @@
 PANDUAN MENJALANKAN PROJECT FINSIGHT (MICROSERVICES)
 =============================================================
 
-PRASYARAT:
-1. Pastikan aplikasi XAMPP sudah dibuka.
-2. Pastikan module "MySQL Database" di XAMPP sudah di-Start (Running).
+CATATAN PENTING:
+- Pastikan Anda sudah menginstall semua library yang ada di file
+  `backend/requirements.txt` dan `frontend/requirements.txt`.
+- Direkomendasikan untuk menggunakan virtual environment.
 
 -------------------------------------------------------------
-LANGKAH 1: MENJALANKAN BACKEND (API SERVER - PORT 5000)
+LANGKAH 1: KONFIGURASI URL BACKEND (OPSIONAL)
+-------------------------------------------------------------
+- Jika backend akan dijalankan di alamat IP atau port yang berbeda dari default (http://127.0.0.1:5000),
+  buka file `frontend/app.py` dan ubah nilai variabel `BACKEND_URL`.
+
+-------------------------------------------------------------
+LANGKAH 2: MENJALANKAN BACKEND (API SERVER - PORT 5000)
 -------------------------------------------------------------
 1. Buka aplikasi Terminal baru.
-2. Copy-paste perintah berikut baris per baris:
-
-cd "/Users/timotiuspatrick/Documents/Patrick/Kuliah & Coding"
-source .venv/bin/activate
-cd FINSIGHT/backend
-python app.py
+2. Arahkan ke direktori project FINSIGHT.
+   Contoh: cd /path/to/your/project/FINSIGHT
+3. Aktifkan virtual environment Anda.
+   Contoh (macOS/Linux): source .venv/bin/activate
+   Contoh (Windows): .venv\Scripts\activate
+4. Masuk ke direktori backend:
+   cd backend
+5. Jalankan server backend:
+   python app.py
 
 > Tunggu sampai muncul tulisan: "Running on http://127.0.0.1:5000"
 > JANGAN tutup terminal ini. Biarkan berjalan.
 
 -------------------------------------------------------------
-LANGKAH 2: MENJALANKAN FRONTEND (WEB SERVER - PORT 8000)
+LANGKAH 3: MENJALANKAN FRONTEND (WEB SERVER - PORT 8000)
 -------------------------------------------------------------
-1. Buka tab terminal baru (tekan Command + T) atau jendela terminal baru.
-2. Copy-paste perintah berikut baris per baris:
-
-cd "/Users/timotiuspatrick/Documents/Patrick/Kuliah & Coding"
-source .venv/bin/activate
-cd FINSIGHT/frontend
-python app.py
+1. Buka tab terminal baru atau jendela terminal baru.
+2. Arahkan ke direktori project FINSIGHT.
+3. Aktifkan virtual environment Anda.
+4. Masuk ke direktori frontend:
+   cd frontend
+5. Jalankan server frontend:
+   python app.py
 
 > Tunggu sampai muncul tulisan: "Running on http://127.0.0.1:8000"
 
 -------------------------------------------------------------
-LANGKAH 3: AKSES APLIKASI
+LANGKAH 4: AKSES APLIKASI
 -------------------------------------------------------------
 1. Buka Browser (Chrome/Safari).
 2. Akses alamat: http://127.0.0.1:8000

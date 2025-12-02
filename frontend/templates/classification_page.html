@@ -125,7 +125,7 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     resultValue.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>';
     resultDesc.textContent = 'Analyzing...';
 
-    fetch('http://127.0.0.1:5000/api/predict/high_profit_classifier', {
+    fetch(BACKEND_URL + '/predict/high_profit_classifier', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -103,7 +103,7 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     const resultValue = document.getElementById('result-value');
     resultValue.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>';
 
-    fetch('http://127.0.0.1:5000/api/predict/quantity', {
+    fetch(BACKEND_URL + '/predict/quantity', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
