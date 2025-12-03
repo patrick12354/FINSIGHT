@@ -48,9 +48,7 @@ def get_options():
             'Product_Sub_Category', 'Product_Category', 'Region', 'City', 'Country'
         ]
         
-        # Langsung baca dari CSV
         df = pd.read_csv(CSV_PATH)
-        # Ganti spasi di nama kolom dengan underscore agar konsisten
         df.columns = [c.replace(' ', '_') for c in df.columns]
         
         options = {}
@@ -120,5 +118,4 @@ def predict_classifier():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    # Host 0.0.0.0 agar bisa diakses dari IP lain jika perlu
     app.run(port=5000, debug=True, host='0.0.0.0')

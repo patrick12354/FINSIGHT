@@ -1,14 +1,13 @@
 from flask import Flask, render_template
-import requests # Library untuk request ke backend
+import requests
 
 app = Flask(__name__)
 
 # Single source of truth for backend URL
-BACKEND_URL = "http://192.168.112.232:5000" 
+BACKEND_URL = "http://192.168.1.2:5000" 
 
 def get_backend_options():
     try:
-        # Frontend meminta data ke Backend
         response = requests.get(f"{BACKEND_URL}/api/options")
         return response.json()
     except:

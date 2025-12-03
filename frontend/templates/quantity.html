@@ -5,22 +5,17 @@
 {% block content %}
 <div class="content-section">
     <div class="container">
-        <!-- Judul dan Deskripsi Center -->
         <h2 class="section-title text-center mb-4">Quantity Prediction Model</h2>
         <p class="section-description text-center mb-5">This model predicts the potential quantity of products sold based on price, cost, and promotional data. Please provide the following inputs.</p>
         
-        <!-- Row dengan justify-content-center dan ID main-row -->
         <div class="row g-5 justify-content-center" id="main-row">
             
-            <!-- Input Form Column -->
-            <!-- Awalnya col-lg-8 dan mx-auto agar di tengah -->
             <div class="col-lg-8 transition-all" id="form-column">
                 <div class="card form-container shadow-sm">
                     <div class="card-header bg-primary text-white">Input Parameters for Quantity Prediction</div>
                     <div class="card-body">
                         <form id="prediction-form">
                             <div class="row">
-                                <!-- Model 2 Features -->
                                 <div class="col-md-6 mb-3">
                                     <label for="Price" class="form-label">Price</label>
                                     <div class="input-group">
@@ -78,11 +73,8 @@
                 </div>
             </div>
 
-            <!-- Output/Result Column -->
-            <!-- Defaultnya 'd-none' (hidden) -->
             <div class="col-lg-5 d-none fade-in" id="result-column">
                 <div class="card shadow-sm h-100 border-0 bg-light">
-                    <!-- Menggunakan warna info (biru muda) untuk membedakan dengan profit -->
                     <div class="card-header bg-info text-white">Prediction Result</div>
                     <div class="card-body result-container text-center d-flex flex-column justify-content-center align-items-center" id="result-container">
                         <h4 class="result-title text-uppercase text-muted small">Predicted Quantity</h4>
@@ -123,12 +115,10 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     const formCol = document.getElementById('form-column');
     const resultCol = document.getElementById('result-column');
 
-    // 1. Tampilkan Kolom Output (UI Logic)
-    // Hapus posisi tengah, kecilkan kolom input, munculkan kolom output
     formCol.classList.remove('mx-auto', 'col-lg-8'); 
     formCol.classList.add('col-lg-7'); 
     
-    resultCol.classList.remove('d-none'); // Munculkan hasil
+    resultCol.classList.remove('d-none');
 
     // Create the data object with only the required fields for Model 2
     const data = {
@@ -144,7 +134,6 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     resultValue.innerHTML = '<div class="spinner-border text-info" role="status" style="width: 3rem; height: 3rem;"><span class="visually-hidden">Loading...</span></div>';
     resultDesc.textContent = 'Calculating potential sales volume...';
 
-    // Auto scroll untuk tampilan mobile
     if(window.innerWidth < 992) {
         resultCol.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }

@@ -90,19 +90,16 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const popup = document.getElementById('welcome-popup');
-        const closeBtn = popup.querySelector('.btn-close');
-    
-        // Cek apakah pengguna sudah pernah melihat popup (opsional)
-        if (!localStorage.getItem('finsight_welcome_shown')) {
-            // Tunda muncul 1 detik untuk UX lebih baik
-            setTimeout(() => {
-                popup.classList.remove('d-none');
-                setTimeout(() => popup.classList.add('show'), 10);
-                localStorage.setItem('finsight_welcome_shown', 'true');
-            }, 1000);
-        }
-    
+            const popup = document.getElementById('welcome-popup');
+            const closeBtn = popup.querySelector('.btn-close');
+        
+            if (!localStorage.getItem('finsight_welcome_shown')) {
+                setTimeout(() => {
+                    popup.classList.remove('d-none');
+                    setTimeout(() => popup.classList.add('show'), 10);
+                    localStorage.setItem('finsight_welcome_shown', 'true');
+                }, 1000);
+            }    
         closeBtn.addEventListener('click', function () {
             popup.classList.remove('show');
             setTimeout(() => popup.classList.add('d-none'), 400);

@@ -8,18 +8,14 @@
         <h2 class="section-title text-center mb-4">High-Profit Classifier</h2>
         <p class="section-description text-center mb-5">This model classifies a transaction as having high or low profit potential. Please provide the required parameters below.</p>
         
-        <!-- Tambahkan ID pada row agar mudah dimanipulasi jika perlu -->
         <div class="row g-5 justify-content-center" id="main-row">
             
-            <!-- Input Form Column -->
-            <!-- Awalnya col-lg-8 dan mx-auto agar di tengah -->
             <div class="col-lg-8 transition-all" id="form-column">
                 <div class="card form-container shadow-sm">
                     <div class="card-header bg-primary text-white">Input Parameters for Classification</div>
                     <div class="card-body">
                         <form id="prediction-form">
                             <div class="row">
-                                <!-- Model 3 Features -->
                                 <div class="col-md-6 mb-3">
                                     <label for="Product_Sub_Category" class="form-label">Product Sub Category</label>
                                     <select class="form-select" id="Product_Sub_Category" name="Product_Sub_Category" required>
@@ -90,15 +86,12 @@
                 </div>
             </div>
 
-            <!-- Output/Result Column -->
-            <!-- Defaultnya 'd-none' (hidden) -->
             <div class="col-lg-5 d-none fade-in" id="result-column">
                 <div class="card shadow-sm h-100 border-0 bg-light">
                     <div class="card-header bg-dark text-white">Classification Result</div>
                     <div class="card-body result-container text-center d-flex flex-column justify-content-center align-items-center" id="result-container">
                         <h4 class="result-title text-uppercase text-muted small">Profit Potential</h4>
                         <div class="my-4" id="result-icon-container">
-                            <!-- Icon will be injected here -->
                         </div>
                         <p class="result-value display-4 fw-bold mb-2" id="result-value">-</p>
                         <small class="text-muted" id="result-desc">Analyzing data...</small>
@@ -137,12 +130,10 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     const formCol = document.getElementById('form-column');
     const resultCol = document.getElementById('result-column');
 
-    // 1. Tampilkan Kolom Output (UI Logic)
-    // Ubah layout: Kecilkan form, geser ke kiri, munculkan hasil di kanan
-    formCol.classList.remove('mx-auto', 'col-lg-8'); // Hapus posisi tengah dan lebar awal
-    formCol.classList.add('col-lg-7'); // Set lebar baru
+    formCol.classList.remove('mx-auto', 'col-lg-8'); 
+    formCol.classList.add('col-lg-7'); 
     
-    resultCol.classList.remove('d-none'); // Munculkan kolom hasil
+    resultCol.classList.remove('d-none');
 
     // Create the data object
     const data = {
@@ -159,7 +150,6 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     resultValue.innerHTML = '<div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"><span class="visually-hidden">Loading...</span></div>';
     resultDesc.textContent = 'Processing transaction data...';
 
-    // Scroll sedikit agar user sadar ada kolom baru (optional, bagus untuk mobile)
     if(window.innerWidth < 992) {
         resultCol.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }

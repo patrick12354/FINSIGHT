@@ -12,11 +12,8 @@
         </p>
     </div>
     
-    <!-- Tambahkan justify-content-center dan ID main-row -->
     <div class="row g-4 justify-content-center" id="main-row">
         
-        <!-- Input Form Column -->
-        <!-- Awalnya col-lg-8 dan mx-auto agar di tengah -->
         <div class="col-lg-8 transition-all" id="form-column">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white py-3 border-bottom">
@@ -56,28 +53,8 @@
                                     {% for item in form_data['Product_Sub_Category'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label small">Product Name (Type to search)</label>
-                                <input class="form-control" list="productOptions" name="Product_Name" placeholder="Type product name..." required>
-                                <datalist id="productOptions">
-                                    {% for item in form_data['Product_Name'] %}<option value="{{ item }}">{% endfor %}
-                                </datalist>
-                            </div>
-
                             <div class="col-12"><h6 class="text-muted text-uppercase small fw-bold mt-3">Location & Strategy</h6></div>
 
-                            <div class="col-md-4">
-                                <label class="form-label small">Region</label>
-                                <select class="form-select" name="Region" required>
-                                    {% for item in form_data['Region'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small">Country</label>
-                                <select class="form-select" name="Country" required>
-                                    {% for item in form_data['Country'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
-                                </select>
-                            </div>
                             <div class="col-md-4">
                                 <label class="form-label small">City</label>
                                 <input class="form-control" list="cityOptions" name="City" placeholder="Type city..." required>
@@ -121,8 +98,6 @@
             </div>
         </div>
         
-        <!-- Result Column -->
-        <!-- Defaultnya 'd-none' (hidden) -->
         <div class="col-lg-5 d-none fade-in" id="result-column">
             <div class="sticky-top" style="top: 90px; z-index: 1;">
                 
@@ -183,12 +158,10 @@ document.getElementById('overall-form').addEventListener('submit', function(e) {
     const formCol = document.getElementById('form-column');
     const resultCol = document.getElementById('result-column');
 
-    // 1. Tampilkan Kolom Output (UI Logic)
-    // Hapus posisi tengah, kecilkan kolom input, munculkan kolom output
     formCol.classList.remove('mx-auto', 'col-lg-8'); 
     formCol.classList.add('col-lg-7'); 
     
-    resultCol.classList.remove('d-none'); // Munculkan hasil
+    resultCol.classList.remove('d-none');
 
     // Loading State
     btn.disabled = true;
@@ -203,22 +176,56 @@ document.getElementById('overall-form').addEventListener('submit', function(e) {
     }
 
     const formData = new FormData(this);
-    const data = Object.fromEntries(formData.entries());
+    const allData = Object.fromEntries(formData.entries());
 
-    // Helper function untuk fetch API
-    const fetchApi = (endpoint) => {
+    // --- Data Filtering ---
+    // Create specific data payloads for each model based on its requirements.
+
+    // Payload for Profit Model
+    const profitPayload = {
+        'Product_Sub_Category': allData.Product_Sub_Category,
+        'Manufacturer': allData.Manufacturer,
+        'City': allData.City,
+        'Channel': allData.Channel,
+        'date_month': allData.date_month,
+        'Promotion_Name': allData.Promotion_Name,
+        'date_day_of_week': allData.date_day_of_week
+    };
+
+    // Payload for Quantity Model
+    const quantityPayload = {
+        'Price': allData.Price,
+        'Unit_Cost': allData.Unit_Cost,
+        'Product_Category': allData.Product_Category,
+        'date_month': allData.date_month,
+        'date_day_of_week': allData.date_day_of_week,
+        'Promotion_Name': allData.Promotion_Name
+    };
+
+    // Payload for High-Profit Classification Model
+    const classPayload = {
+        'Product_Sub_Category': allData.Product_Sub_Category,
+        'City': allData.City,
+        'Manufacturer': allData.Manufacturer,
+        'Product_Category': allData.Product_Category,
+        'date_month': allData.date_month,
+        'date_day_of_week': allData.date_day_of_week,
+        'Promotion_Name': allData.Promotion_Name
+    };
+
+    // Helper function untuk fetch API, now accepts a payload
+    const fetchApi = (endpoint, payload) => {
         return fetch(`${BACKEND_URL}/predict/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: JSON.stringify(payload)
         }).then(res => res.json());
     };
 
-    // Jalankan 3 request secara paralel
     Promise.all([
-        fetchApi('profit'),
-        fetchApi('quantity'),
-        fetchApi('high_profit_classifier')
+        fetchApi('profit', profitPayload),
+        fetchApi('quantity', quantityPayload),
+        fetchApi('high_profit_classifier', classPayload)
     ])
     .then(([profitData, quantityData, classData]) => {
         
