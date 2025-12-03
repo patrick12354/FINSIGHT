@@ -4,7 +4,7 @@ import requests # Library untuk request ke backend
 app = Flask(__name__)
 
 # Single source of truth for backend URL
-BACKEND_URL = "http://127.0.0.1:5000" 
+BACKEND_URL = "http://192.168.112.232:5000" 
 
 def get_backend_options():
     try:
@@ -43,4 +43,4 @@ def collaboration():
     return render_template('collaboration.html', backend_url=BACKEND_URL)
 
 if __name__ == '__main__':
-    app.run(port=8000, debug=True, host ='0.0.0.0')
+    app.run(port=8000, debug=True, host ='0.0.0.0') 
