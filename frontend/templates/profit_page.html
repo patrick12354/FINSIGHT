@@ -5,13 +5,18 @@
 {% block content %}
 <div class="content-section">
     <div class="container">
-        <h2 class="section-title">Profit Prediction Model</h2>
-        <p class="section-description">This model predicts the potential profit based on product, location, and promotion data. Please provide the following inputs.</p>
-        <div class="row g-5">
-            <!-- Input Form -->
-            <div class="col-lg-7">
-                <div class="card form-container">
-                    <div class="card-header">Input Parameters for Profit Prediction</div>
+        <!-- Judul dan Deskripsi dibuat Center -->
+        <h2 class="section-title text-center mb-4">Profit Prediction Model</h2>
+        <p class="section-description text-center mb-5">This model predicts the potential profit based on product, location, and promotion data. Please provide the following inputs.</p>
+        
+        <!-- Tambahkan justify-content-center dan ID main-row -->
+        <div class="row g-5 justify-content-center" id="main-row">
+            
+            <!-- Input Form Column -->
+            <!-- Awalnya col-lg-8 dan mx-auto agar di tengah -->
+            <div class="col-lg-8 transition-all" id="form-column">
+                <div class="card form-container shadow-sm">
+                    <div class="card-header bg-primary text-white">Input Parameters for Profit Prediction</div>
                     <div class="card-body">
                         <form id="prediction-form">
                             <div class="row">
@@ -80,25 +85,41 @@
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 mt-3">Predict Profit</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-3 btn-lg">Predict Profit</button>
                         </form>
                     </div>
                 </div>
             </div>
-            <!-- Output/Result -->
-            <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">Prediction Result</div>
-                    <div class="card-body result-container" id="result-container">
-                        <h4 class="result-title">Predicted Profit</h4>
-                        <p class="result-value" id="result-value">$0.00</p>
-                        <small class="text-muted">Result will be updated after prediction.</small>
+
+            <!-- Output/Result Column -->
+            <!-- Defaultnya 'd-none' (hidden) -->
+            <div class="col-lg-5 d-none fade-in" id="result-column">
+                <div class="card shadow-sm h-100 border-0 bg-light">
+                    <div class="card-header bg-success text-white">Prediction Result</div>
+                    <div class="card-body result-container text-center d-flex flex-column justify-content-center align-items-center" id="result-container">
+                        <h4 class="result-title text-uppercase text-muted small">Predicted Profit</h4>
+                        <p class="result-value display-4 fw-bold text-success my-4" id="result-value">$0.00</p>
+                        <small class="text-muted" id="result-desc">Result updated based on inputs.</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* CSS untuk animasi transisi layout */
+    .transition-all {
+        transition: all 0.5s ease;
+    }
+    .fade-in {
+        animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}
 
 {% block scripts %}
@@ -107,7 +128,20 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     e.preventDefault();
 
     const form = e.target;
+    const resultValue = document.getElementById('result-value');
+    const resultDesc = document.getElementById('result-desc');
+
+    // Elemen Kolom Layout
+    const formCol = document.getElementById('form-column');
+    const resultCol = document.getElementById('result-column');
+
+    // 1. Tampilkan Kolom Output (UI Logic)
+    // Hapus posisi tengah, kecilkan kolom input, munculkan kolom output
+    formCol.classList.remove('mx-auto', 'col-lg-8'); 
+    formCol.classList.add('col-lg-7'); 
     
+    resultCol.classList.remove('d-none'); // Munculkan hasil
+
     // Create the data object with only the required fields for Model 1
     const data = {
         'Product_Sub_Category': form.elements['Product_Sub_Category'].value,
@@ -120,8 +154,13 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     };
 
     // Show loading state
-    const resultValue = document.getElementById('result-value');
-    resultValue.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>';
+    resultValue.innerHTML = '<div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;"><span class="visually-hidden">Loading...</span></div>';
+    resultDesc.textContent = 'Calculating profit prediction...';
+
+    // Auto scroll untuk tampilan mobile
+    if(window.innerWidth < 992) {
+        resultCol.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     fetch(BACKEND_URL + '/predict/profit', {
         method: 'POST',
@@ -132,7 +171,6 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     })
     .then(response => {
         if (!response.ok) {
-            // Try to get error message from backend
             return response.json().then(err => {
                 throw new Error(err.error || `HTTP error! status: ${response.status}`);
             });
@@ -141,18 +179,22 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     })
     .then(result => {
         if (result.error) {
-            resultValue.textContent = `Error: ${result.error}`;
+            resultValue.textContent = 'Error';
+            resultDesc.textContent = result.error;
         } else {
             // Format as currency
             const formattedResult = new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD'
             }).format(result.result);
+            
             resultValue.textContent = formattedResult;
+            resultDesc.textContent = 'Estimation based on historical data.';
         }
     })
     .catch(error => {
-        resultValue.textContent = 'Prediction Failed';
+        resultValue.textContent = 'Failed';
+        resultDesc.textContent = 'An error occurred during prediction.';
         console.error('Fetch Error:', error);
     });
 });

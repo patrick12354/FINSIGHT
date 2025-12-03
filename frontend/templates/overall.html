@@ -12,8 +12,12 @@
         </p>
     </div>
     
-    <div class="row g-4">
-        <div class="col-lg-7">
+    <!-- Tambahkan justify-content-center dan ID main-row -->
+    <div class="row g-4 justify-content-center" id="main-row">
+        
+        <!-- Input Form Column -->
+        <!-- Awalnya col-lg-8 dan mx-auto agar di tengah -->
+        <div class="col-lg-8 transition-all" id="form-column">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white py-3 border-bottom">
                     <h5 class="mb-0 fw-bold text-dark">🎛️ Input Parameters</h5>
@@ -117,7 +121,9 @@
             </div>
         </div>
         
-        <div class="col-lg-5">
+        <!-- Result Column -->
+        <!-- Defaultnya 'd-none' (hidden) -->
+        <div class="col-lg-5 d-none fade-in" id="result-column">
             <div class="sticky-top" style="top: 90px; z-index: 1;">
                 
                 <div class="card shadow-sm border-0 mb-3 border-start border-4 border-success">
@@ -146,6 +152,20 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* CSS untuk animasi transisi layout */
+    .transition-all {
+        transition: all 0.5s ease;
+    }
+    .fade-in {
+        animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}
 
 {% block scripts %}
@@ -153,24 +173,40 @@
 document.getElementById('overall-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    // UI Elements
     const btn = document.getElementById('predictBtn');
     const profitEl = document.getElementById('overall-profit-result');
     const quantityEl = document.getElementById('overall-quantity-result');
     const classEl = document.getElementById('overall-classification-result');
+    
+    // Layout Elements
+    const formCol = document.getElementById('form-column');
+    const resultCol = document.getElementById('result-column');
+
+    // 1. Tampilkan Kolom Output (UI Logic)
+    // Hapus posisi tengah, kecilkan kolom input, munculkan kolom output
+    formCol.classList.remove('mx-auto', 'col-lg-8'); 
+    formCol.classList.add('col-lg-7'); 
+    
+    resultCol.classList.remove('d-none'); // Munculkan hasil
 
     // Loading State
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
-    profitEl.innerHTML = '<span class="spinner-grow spinner-grow-sm"></span>';
-    quantityEl.innerHTML = '<span class="spinner-grow spinner-grow-sm"></span>';
-    classEl.innerHTML = '<span class="spinner-grow spinner-grow-sm"></span>';
+    profitEl.innerHTML = '<span class="spinner-grow spinner-grow-sm text-success"></span>';
+    quantityEl.innerHTML = '<span class="spinner-grow spinner-grow-sm text-info"></span>';
+    classEl.innerHTML = '<span class="spinner-grow spinner-grow-sm text-warning"></span>';
+    
+    // Auto scroll untuk tampilan mobile
+    if(window.innerWidth < 992) {
+        resultCol.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
 
     // Helper function untuk fetch API
     const fetchApi = (endpoint) => {
-        // Gunakan global BACKEND_URL dari base.html
         return fetch(`${BACKEND_URL}/predict/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -205,13 +241,12 @@ document.getElementById('overall-form').addEventListener('submit', function(e) {
         else {
             const isHigh = classData.result === 1;
             classEl.innerHTML = isHigh 
-                ? '<span class="text-success">YES (High Profit)</span>' 
-                : '<span class="text-danger">NO (Low Profit)</span>';
+                ? '<span class="text-success">YES <span class="fs-6 fw-normal">(High Profit)</span></span>' 
+                : '<span class="text-danger">NO <span class="fs-6 fw-normal">(Low Profit)</span></span>';
         }
     })
     .catch(err => {
         console.error(err);
-        alert("Terjadi kesalahan koneksi ke Backend.");
         profitEl.innerText = "-";
         quantityEl.innerText = "-";
         classEl.innerText = "-";
