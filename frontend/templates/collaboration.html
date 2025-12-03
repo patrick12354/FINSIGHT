@@ -1,59 +1,125 @@
 {% extends "base.html" %}
 
-{% block title %}Collaborate with Us - FINSIGHT{% endblock %}
+{% block title %}Collaborate with FINSIGHT{% endblock %}
 
 {% block content %}
-<div class="content-section">
+<div class="hero-section text-center py-5 bg-white">
+    <div class="container py-4">
+        <h1 class="display-4 fw-bold mb-3 text-dark">Unlock AI-Powered Insights for Your Business</h1>
+        <p class="lead mx-auto text-muted" style="max-width: 800px;">
+            Transform your raw data into a strategic advantage. Partner with FINSIGHT in our exclusive <strong>Dataset Exchange Program</strong>.
+        </p>
+    </div>
+</div>
+
+<div class="content-section py-5 bg-light">
     <div class="container">
-        <div class="text-center">
-            <h2 class="section-title">Partner with FINSIGHT</h2>
-            <p class="lead" style="max-width: 600px; margin: auto;">A unique opportunity for mutual growth in the age of AI.</p>
-        </div>
-
-        <hr class="my-5">
-
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h3>Our Proposal: Your Data for Our AI</h3>
-                        <p class="text-muted">
-                            At FINSIGHT, we are on a mission to build the most accurate and robust predictive financial models in the industry. To achieve this, our AI needs to learn from a diverse range of real-world sales data. This is where you come in.
-                        </p>
-
-                        <div class="card proposal-card my-4">
-                            <div class="card-body">
-                                <h5 class="card-title" style="color: var(--dark-blue);">The Offer</h5>
-                                <p class="card-text">
-                                    We are offering a compelling partnership for forward-thinking companies. In exchange for your transactional sales data, we will provide you with:
-                                </p>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2">✅ <strong>Free, unlimited access</strong> to our full suite of predictive AI models for the first two (2) years.</li>
-                                    <li class="mb-2">✅ Full technical support and onboarding for your team.</li>
-                                    <li>✅ A competitive edge by leveraging predictive analytics before anyone else.</li>
-                                </ul>
-                                <p class="card-text mt-3">
-                                    There are no hidden fees. This is a strategic partnership where your data helps us refine our intelligence, and our intelligence helps you grow your business.
-                                </p>
-                            </div>
+        <div class="row justify-content-center align-items-stretch g-0 exchange-container">
+            <div class="col-md-5">
+                <div class="card h-100 border-0 shadow-sm exchange-card left-card">
+                    <div class="card-body text-center p-5">
+                        <div class="icon-circle bg-primary-soft text-primary mb-4 mx-auto">
+                            <i class="fas fa-database fa-3x"></i>
                         </div>
+                        <h2 class="h3 mb-4">You Provide Data</h2>
+                        <ul class="list-unstyled text-start d-inline-block feature-list">
+                            <li class="mb-3">
+                                <i class="fas fa-user-shield text-primary me-3 fa-lg"></i>
+                                <div><strong>Anonymized Transactions</strong><br><small class="text-muted">Historical sales data, privacy secured.</small></div>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-tags text-primary me-3 fa-lg"></i>
+                                <div><strong>Product Catalogs</strong><br><small class="text-muted">SKUs, categories, and attributes.</small></div>
+                            </li>
+                            <li>
+                                <i class="fas fa-money-bill-wave text-primary me-3 fa-lg"></i>
+                                <div><strong>Pricing History</strong><br><small class="text-muted">Past price points and costs.</small></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                        <h4>Why Partner With Us?</h4>
-                        <p>
-                            By joining us, you are not just a client; you are a foundational partner. You will play a crucial role in shaping the future of predictive analytics. All data provided will be anonymized and handled with the strictest confidentiality, used exclusively for model training to enhance predictive accuracy.
-                        </p>
+            <div class="col-md-2 d-none d-md-flex align-items-center justify-content-center z-index-1">
+                <div class="exchange-arrow-circle bg-white shadow text-primary">
+                    <i class="fas fa-exchange-alt fa-2x"></i>
+                </div>
+            </div>
 
-                        <div class="text-center mt-4">
-                            <h4>Interested?</h4>
-                            <p>
-                                If you are ready to unlock the future of your business, please contact us to discuss the next steps.
-                            </p>
-                            <a href="mailto:timotiuspatrick@gmail.com" class="btn btn-primary btn-lg">Contact Us</a>
+            <div class="col-md-5 mt-4 mt-md-0">
+                <div class="card h-100 border-0 shadow-sm exchange-card right-card highlight-border">
+                    <div class="card-body text-center p-5">
+                        <div class="icon-circle bg-success-soft text-success mb-4 mx-auto">
+                            <i class="fas fa-rocket fa-3x"></i>
                         </div>
+                        <h2 class="h3 mb-4">We Provide AI Models</h2>
+                        <ul class="list-unstyled text-start d-inline-block feature-list">
+                            <li class="mb-3">
+                                <i class="fas fa-chart-line text-success me-3 fa-lg"></i>
+                                <div><strong>Profit Predictor Model</strong><br><small class="text-muted">Forecast profitability of new strategies.</small></div>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-bullseye text-success me-3 fa-lg"></i>
+                                <div><strong>Demand Forecasting</strong><br><small class="text-muted">Simulate pricing scenarios & quantity.</small></div>
+                            </li>
+                            <li>
+                                <i class="far fa-lightbulb text-success me-3 fa-lg"></i>
+                                <div><strong>Decision Support System</strong><br><small class="text-muted">Instant High/Low profit scoring.</small></div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="content-section py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center h3 mb-5">Why Partner with FINSIGHT?</h2>
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm benefit-card bg-blue-soft">
+                    <div class="card-body p-4">
+                        <i class="fas fa-chess-knight fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Strategic Edge</h5>
+                        <p class="text-muted mb-0">Stop guessing. Make informed, data-driven decisions before your competitors do.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm benefit-card bg-green-soft">
+                    <div class="card-body p-4">
+                        <i class="fas fa-lock fa-3x text-success mb-3"></i>
+                        <h5 class="fw-bold">Ironclad Security</h5>
+                        <p class="text-muted mb-0">Your data is anonymized, encrypted, and processed under strict NDA protocols. Safety first.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm benefit-card bg-purple-soft">
+                    <div class="card-body p-4">
+                        <i class="fas fa-hand-holding-usd fa-3x text-purple mb-3"></i>
+                        <h5 class="fw-bold">Zero Cost, High Value</h5>
+                        <p class="text-muted mb-0">Gain access to enterprise-grade AI tools without the enterprise-grade price tag. It's a barter.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section text-center text-white py-5" style="background-color: #212529;">
+    <div class="container py-3">
+        <h2 class="h3 fw-bold mb-4">Ready to Transform Your Business?</h2>
+        <a href="mailto:partnership@finsight.com?subject=Partnership Inquiry - Dataset Exchange Program" class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-sm rounded-pill cta-button">
+            <i class="fas fa-paper-plane me-2"></i> Apply for Partnership Now
+        </a>
+        <p class="mt-4 text-white-50 mb-0">Have questions? Email us at <a href="mailto:partnership@finsight.com" class="text-primary-light text-decoration-none fw-bold">partnership@finsight.com</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 {% endblock %}

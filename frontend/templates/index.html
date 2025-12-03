@@ -1,15 +1,61 @@
 {% extends "base.html" %}
 
-{% block title %}FINSIGHT - Empowering Business with Predictive Analytics{% endblock %}
+{% block title %}FINSIGHT - KELOMPOK 7{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="hero-section">
-    <div class="container">
-        <h1 class="display-4">Welcome to FINSIGHT</h1>
-        <p class="lead">Empowering Your Business with Predictive Analytics.</p>
-        <a class="btn btn-primary btn-lg mt-3" href="#who-are-we" role="button">Learn More</a>
+<!-- Hero Section with Auto Carousel Background (3s interval) -->
+<div class="container">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+
+        <!-- Carousel Items -->
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='images/gambar1.jpg') }}');"></div>
+                <div class="hero-overlay d-flex align-items-center">
+                    <div class="container text-center px-4">
+                        <h1 class="display-4 fw-bold text-white text-shadow">Welcome to FINSIGHT</h1>
+                        <p class="lead text-white text-shadow mb-4">Empowering Your Business with Predictive Analytics.</p>
+                        <a class="btn btn-light btn-lg px-5 py-3 fw-semibold" href="#who-are-we" role="button">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='images/gambar2.jpg') }}');"></div>
+                <div class="hero-overlay d-flex align-items-center">
+                    <div class="container text-center px-4">
+                        <h1 class="display-4 fw-bold text-white text-shadow">Predict. Optimize. Grow.</h1>
+                        <p class="lead text-white text-shadow mb-4">Turn your sales data into actionable profit forecasts.</p>
+                        <a class="btn btn-light btn-lg px-5 py-3 fw-semibold" href="{{ url_for('profit') }}" role="button">Try Profit Prediction</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='images/gambar3.jpg') }}');"></div>
+                <div class="hero-overlay d-flex align-items-center">
+                    <div class="container text-center px-4">
+                        <h1 class="display-4 fw-bold text-white text-shadow">AI That Understands Your Business</h1>
+                        <p class="lead text-white text-shadow mb-4">High-profit opportunities, quantity forecasts, and more — powered by machine learning.</p>
+                        <a class="btn btn-light btn-lg px-5 py-3 fw-semibold" href="{{ url_for('overall') }}" role="button">Explore All Models</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 
 <!-- "Who Are We?" Section -->
@@ -32,4 +78,34 @@
         </div>
     </div>
 </div>
+<!-- Welcome Popup -->
+<div id="welcome-popup" class="d-none">
+    <button type="button" class="btn-close" aria-label="Close"></button>
+    <div class="popup-title">Selamat Datang di FINSIGHT!</div>
+    <div class="popup-message">
+        Platform prediksi profitabilitas berbasis AI untuk membantu bisnis Anda tumbuh lebih cerdas.
+    </div>
+</div>
 {% endblock %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const popup = document.getElementById('welcome-popup');
+        const closeBtn = popup.querySelector('.btn-close');
+    
+        // Cek apakah pengguna sudah pernah melihat popup (opsional)
+        if (!localStorage.getItem('finsight_welcome_shown')) {
+            // Tunda muncul 1 detik untuk UX lebih baik
+            setTimeout(() => {
+                popup.classList.remove('d-none');
+                setTimeout(() => popup.classList.add('show'), 10);
+                localStorage.setItem('finsight_welcome_shown', 'true');
+            }, 1000);
+        }
+    
+        closeBtn.addEventListener('click', function () {
+            popup.classList.remove('show');
+            setTimeout(() => popup.classList.add('d-none'), 400);
+        });
+    });
+</script>
